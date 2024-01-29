@@ -1,0 +1,8 @@
+body {
+	font-family: sans-serif;
+}
+
+canvas#display {
+	width: 256px;
+	border: 1px solid #000;
+}
