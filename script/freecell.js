@@ -36,7 +36,7 @@ const log = Math.log10;
 const int = Math.floor;
 const frac = (x) => x - int(x); // Reste de la division euclidienne
 const randint = (a, b) => int(a + (b - a + 1) * Math.random());
-const resetVars = () => { for (let i = 'a'; i <= 'z'; i++) vars[i] = 0; }
+const resetVars = () => { for (let i = 0; i < 26; i++) vars[String.fromCharCode(i + 65)] = 0; }
 const waitForNewKey = async () => {
 	// Attendre un nouvel appui sur une touche sans bloquer le thread
 	var passeA0 = false; // Si getkey est tombé à 0 (touche relâchée)
@@ -82,7 +82,6 @@ const freecell = {
 			}
 		}
 		mat.A = [[0, 0], [1, 0]];
-		vars.theta = 0;
 		resetVars();
 
 		console.log('- Reset');
@@ -239,7 +238,7 @@ const freecell = {
 		}
 
 		console.log('- Taille');
-		this.effaceCurseurs();
+		this.preSelecteur();
 	},
 
 	/**
@@ -248,27 +247,16 @@ const freecell = {
 	 * @Prédécesseurs : taille
 	 * @Sucesseurs : selecteur, auto
 	 */
-	effaceCurseurs() {
-		console.log('+ efface curseurs');
-		for (let Y = 8; Y <= 50; Y += 6) {
-			display.text(Y, 105, ' ');
-		}
-		for (let Y = 35; Y <= 53; Y += 6) {
-			display.text(Y, 4, ' ');
-		}
+	preSelecteur() {
+		console.log('+ preSelecteur');
 		if (mat.A[0][0] === mat.A[1][0]) {
 			mat.A[1][0]++;
 			// Augment(mat A, [[0],[0]]) permet d'agrandir la matrice A
 			mat.A[0].push(0);
 			mat.A[1].push(0);
 		}
-		if (vars.theta === 1) {
-			console.log('- efface curseurs');
-			this.theta(); // Goto theta
-			return;
-		}
 		// retourne jusqu'à la boucle du selecteur
-		console.log('- efface curseurs');
+		console.log('- preSelecteur');
 	},
 
 	/**
@@ -279,11 +267,18 @@ const freecell = {
 	 */
 	async selecteur() {
 		vars.A = 1;
-		display.text(8, 105, '>');
 		console.log('+ Selecteur');
 		do {
+			for (let Y = 8; Y <= 50; Y += 6) {
+				display.text(Y, 105, ' ');
+			}
+			for (let Y = 35; Y <= 53; Y += 6) {
+				display.text(Y, 4, ' ');
+			}
+			if (vars.A > 8) display.text((vars.A - 8) * 6 + 29, 4, '<');
+			else display.text(vars.A * 6 + 2, 105, '>');
+
 			display.text(1, 120, ' ');
-			vars.theta = 0;
 			await waitForNewKey();
 
 			switch (getKey) {
@@ -327,14 +322,6 @@ const freecell = {
 			}
 			if (vars.A > 12) vars.A = 1;
 			if (vars.A < 1) vars.A = 12;
-			for (let Y = 8; Y <= 50; Y += 6) {
-				display.text(Y, 105, ' ');
-			}
-			for (let Y = 35; Y <= 53; Y += 6) {
-				display.text(Y, 4, ' ');
-			}
-			if (vars.A > 8) display.text((vars.A - 8) * 6 + 29, 4, '<');
-			else display.text(vars.A * 6 + 2, 105, '>');
 
 			// Boucle dans le selecteur, Goto S
 		} while (1);
@@ -599,11 +586,11 @@ const freecell = {
 			mat.A[0][mat.A[0][0]] = vars.A;
 			mat.A[1][mat.A[0][0]] = vars.C + 12;
 			this.effacerCarte(vars.A, vars.B);
+			if (vars.C === 1) vars.I = vars.D;
+			if (vars.C === 2) vars.J = vars.D;
+			if (vars.C === 3) vars.K = vars.D;
+			if (vars.C === 4) vars.L = vars.D;
 		}
-		if (vars.C === 1) vars.I = vars.D;
-		if (vars.C === 2) vars.J = vars.D;
-		if (vars.C === 3) vars.K = vars.D;
-		if (vars.C === 4) vars.L = vars.D;
 		console.log('- GO TAS');
 		this.tas(); // Goto T
 	},
@@ -686,22 +673,26 @@ const freecell = {
 		console.log('+ Auto');
 		display.text(1, 120, 'A');
 		await sleep(100); // Temps de chargement simulé
-		vars.theta = 1;
-		for (let A = 1; A <= 12; A++) {
-			vars.E = this.tailleColonneCarte(A);
-			if (vars.E === 0) continue; // Pas de carte dans la colonne
-			vars.C = this.couleurCarte(A, vars.E);
-			vars.G = this.valeurCarte(A, vars.E);
-			vars.H = this.valeurDepot(vars.C);
-			if (vars.G === vars.H + 1) {
-				// Goto R
-				vars.H++;
-				mat.A[0][0]++;
-				mat.A[0][mat.A[0][0]] = A;
-				mat.A[1][mat.A[0][0]] = vars.C + 12;
-				this.effacerCarte(A, vars.E);
+		var deplacementAuto;
+		do {
+			deplacementAuto = false;
+			for (let A = 1; A <= 12; A++) {
+				vars.E = this.tailleColonneCarte(A);
+				if (vars.E === 0) continue; // Pas de carte dans la colonne
+				vars.C = this.couleurCarte(A, vars.E);
+				vars.G = this.valeurCarte(A, vars.E);
+				vars.H = this.valeurDepot(vars.C);
+				if (vars.G === vars.H + 1) {
+					// Goto R
+					vars.H++;
+					mat.A[0][0]++;
+					mat.A[0][mat.A[0][0]] = A;
+					mat.A[1][mat.A[0][0]] = vars.C + 12;
+					this.effacerCarte(A, vars.E);
+					deplacementAuto = true;
+				}
 			}
-		}
+		} while (deplacementAuto);
 
 		console.log('- Auto');
 		return; // Goto S
