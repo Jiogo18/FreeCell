@@ -85,6 +85,25 @@ const waitForNewKey = () => {
 	while (getKey != 0); // TODO: ne pas bloquer
 }
 const freecell = {
+	/**
+	 * Question pour charger une partie en cours
+	 * @Prédécesseurs : rien
+	 * @Sucesseurs : reset, pause
+	 */
+	choixCharger() {
+		vars.S = 0; // Pour éviter d'enregistrer la valeur quand on quitte
+		vars.S = 1; // Entrée utilisateur "Charger la partie "?
+		if (vars.S === 1) {
+			// Goto P
+			return;
+		}
+	},
+
+	/**
+	 * Initialisation
+	 * @Prédécesseurs : choixCharger
+	 * @Sucesseurs : affichage
+	 */
 	reset() {
 		for (let i = 0; i < 9; i++) str[i] = '';
 		for (let a = 1; a <= 52; a++) {
@@ -175,6 +194,11 @@ const freecell = {
 		resetVars();
 	},
 
+	/**
+	 * Mélange de l'affichage et de l'initialisation
+	 * @Prédécesseurs : reset
+	 * @Sucesseurs : taille
+	 */
 	affichage() {
 		this.affichageCasio(display);
 		this.tas();
@@ -182,7 +206,9 @@ const freecell = {
 
 	/**
 	 * Affichage des cartes dans le dépôt (en haut à droite)
-	 * Lbl T:'TAS ??????
+	 * @Prédécesseurs : affichage
+	 * @Sucesseurs : taille, gagne
+	 * Lbl T:'TAS
 	 */
 	tas() {
 		do {
@@ -213,6 +239,7 @@ const freecell = {
 			}
 			if (vars.I + vars.J + vars.K + vars.L === 52) {
 				// Goto G
+				return;
 			}
 
 		} while (1);
@@ -221,6 +248,8 @@ const freecell = {
 	/**
 	 * Compter le nombre de cartes dans chaque colonne
 	 * et stocker dans les variables U, V, W, P, Q, R, M, N
+	 * @Prédécesseurs : tas
+	 * @Sucesseurs : partieSansNom1
 	 */
 	taille() {
 		for (vars.A = 1; vars.A <= 8; vars.A++) {
@@ -243,6 +272,8 @@ const freecell = {
 
 	/**
 	 * Affichage du curseur de sélection de la colonne
+	 * @Prédécesseurs : taille
+	 * @Sucesseurs : selecteur, auto
 	 */
 	partieSansNom1() {
 		for (vars.Y = 8; vars.Y <= 50; vars.Y += 6) {
@@ -265,7 +296,10 @@ const freecell = {
 	},
 
 	/**
-	 * Lbl S:'+SELECTEUR
+	 * Sélecteur de la carte A
+	 * @Prédécesseurs : partieSansNom1, selecteur2, deplace, cancel, auto
+	 * @Sucesseurs : auto, pause, cancel, goTAS, selecteur2
+	 * Lbl S
 	 */
 	selecteur() {
 		display.text(1, 120, ' ');
@@ -332,7 +366,10 @@ const freecell = {
 	},
 
 	/**
-	 * Lbl C:'+SELECTEUR 2
+	 * Sélecteur de la carte B
+	 * @Prédécesseurs : selecteur
+	 * @Sucesseurs : selecteur, deplace
+	 * Lbl C
 	 */
 	selecteur2() {
 		waitForNewKey();
@@ -515,7 +552,8 @@ const freecell = {
 
 	/**
 	 * Précédé par selecteur2
-	 * Suivi TAS (Goto T)
+	 * @Prédécesseurs : selecteur2
+	 * @Sucesseurs : selecteur, TAS
 	 */
 	deplace() {
 		vars.E = this.tailleColonneCarte(vars.A); // Taille de la colonne A / Position de la carte dans la colonne
@@ -560,6 +598,8 @@ const freecell = {
 	/**
 	 * GO TAS ???
 	 * Entouré d'un while 0 pour n'être exécuté que par le label
+	 * @Prédécesseurs : selecteur, auto
+	 * @Sucesseurs : TAS
 	 * Lbl R
 	 */
 	goTAS() {
@@ -582,7 +622,9 @@ const freecell = {
 	},
 
 	/**
-	 * Cancel
+	 * Cance
+	 * @Prédécesseurs : selecteur
+	 * @Sucesseurs : selecteur, TAS
 	 * Entouré d'un while 0 pour n'être exécuté que par le label
 	 * Lbl A
 	 */
@@ -622,6 +664,8 @@ const freecell = {
 
 	/**
 	 * Pause
+	 * @Prédécesseurs : selecteur
+	 * @Sucesseurs : TAS
 	 * Lbl P
 	 */
 	pause() {
@@ -637,6 +681,8 @@ const freecell = {
 
 	/**
 	 * Auto
+	 * @Prédécesseurs : partieSansNom1, selecteur
+	 * @Sucesseurs : selecteur, goTAS
 	 * Déplace automatiquement les cartes vers le dépôt si possible.
 	 * Garde le mode automatique tant qu'il y a des déplacements possibles.
 	 * Lbl theta
@@ -665,6 +711,8 @@ const freecell = {
 
 	/**
 	 * Gagne
+	 * @Prédécesseurs : TAS
+	 * @Sucesseurs : rien
 	 * Lbl G
 	 */
 	gagne() {
