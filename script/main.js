@@ -1,7 +1,7 @@
 var getKeySpan;
 document.addEventListener('DOMContentLoaded', () => {
-	const display = new DisplayGraphCasio();
-	getKeySpan = document.getElementById('getKey');
+	display = new DisplayGraphCasio();
+	getKeySpan = document.getElementById('getkey');
 });
 document.addEventListener('keydown', (e) => {
 	getKey = e.key;
