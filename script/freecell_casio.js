@@ -391,8 +391,12 @@ const freecell = {
 	 * @param {number} index
 	 */
 	tailleColonneCarte(index) {
-		const varsUVW = [vars.U, vars.V, vars.W, vars.P, vars.Q, vars.R, vars.M, vars.N];
-		return varsUVW[index - 1];
+		if (index <= 8) {
+			const varsUVW = [vars.U, vars.V, vars.W, vars.P, vars.Q, vars.R, vars.M, vars.N];
+			return varsUVW[index - 1];
+		} else {
+			return display.pixelTest((index - 8) * 6 + 29, 10) ? 1 : 0;
+		}
 	},
 
 	/**
@@ -430,6 +434,89 @@ const freecell = {
 		}
 	},
 
+	/**
+	 * Dernière carte dans le dépôt de la couleur
+	 * @param {number} couleur
+	 */
+	valeurDepot(couleur) {
+		return [vars.I, vars.J, vars.K, vars.L][couleur - 1];
+	},
+
+	/**
+	 * @param {number} index
+	 * @param {number} tailleColonne
+	 */
+	effacerCarte(index, tailleColonne) {
+		if (index <= 8) {
+			display.text(index * 6 + 2, tailleColonne * 5 + 16, ' ');
+			for (let z = 1; z <= 5; z++) {
+				display.pixelOn(index * 6 + 7, tailleColonne * 5 + 15 + z);
+			}
+		} else {
+			index -= 8;
+			display.text(index * 6 + 29, 10, ' ');
+			for (let z = 1; z <= 5; z++) {
+				display.pixelOn(index * 6 + 34, 9 + z);
+			}
+			index += 8;
+		}
+	},
+
+	/**
+	 * Dessine la carte à l'index donné
+	 * @param {number} index
+	 * @param {number} tailleColonne
+	 * @param {number} couleur
+	 * @param {number} valeur
+	 */
+	dessinerCarte(index, tailleColonne, couleur, valeur) {
+		if (index <= 8) {
+			display.pixelOn(index * 6 + 2, tailleColonne * 5 + 21);
+			if (couleur >= 3) display.pixelOn(index * 6 + 5, tailleColonne * 5 + 23);
+			if (couleur === 2 || couleur === 4) display.pixelOn(index * 6 + 5, tailleColonne * 5 + 22);
+
+			if (valeur > 7) {
+				display.pixelOn(index * 6 + 3, tailleColonne * 5 + 23);
+				valeur -= 8;
+			}
+			if (valeur > 3) {
+				display.pixelOn(index * 6 + 4, tailleColonne * 5 + 23);
+				valeur -= 4;
+			}
+			if (valeur > 1) {
+				display.pixelOn(index * 6 + 3, tailleColonne * 5 + 22);
+				valeur -= 2;
+			}
+			if (valeur > 0) {
+				display.pixelOn(index * 6 + 4, tailleColonne * 5 + 22);
+			}
+		} else {
+			display.pixelOn((index - 8) * 6 + 29, 10);
+			if (couleur >= 3) display.pixelOn((index - 8) * 6 + 32, 12);
+			if (couleur === 2 || couleur === 4) display.pixelOn((index - 8) * 6 + 32, 11);
+
+			if (valeur > 7) {
+				display.pixelOn((index - 8) * 6 + 30, 12);
+				valeur -= 8;
+			}
+			if (valeur > 3) {
+				display.pixelOn((index - 8) * 6 + 31, 12);
+				valeur -= 4;
+			}
+			if (valeur > 1) {
+				display.pixelOn((index - 8) * 6 + 30, 11);
+				valeur -= 2;
+			}
+			if (valeur > 0) {
+				display.pixelOn((index - 8) * 6 + 31, 11);
+			}
+		}
+	},
+
+	/**
+	 * Précédé par selecteur2
+	 * Suivi TAS (Goto T)
+	 */
 	deplace() {
 		vars.E = this.tailleColonneCarte(vars.A); // Taille de la colonne A / Position de la carte dans la colonne
 		vars.C = this.couleurCarte(vars.A, vars.E); // Couleur de la carte A
@@ -437,6 +524,7 @@ const freecell = {
 		vars.F = this.tailleColonneCarte(vars.B); // Taille de la colonne B
 		vars.D = this.couleurCarte(vars.B, vars.F); // Couleur de la carte B
 		// vars.H = this.valeurCarte(vars.B, vars.F); // Valeur de la carte B
+		var deplacement = false;
 		if (vars.B <= 8) {
 			// Colonnes
 			if ((vars.D === 1 || vars.D === 4) === (vars.C === 1 || vars.C === 4)) {
@@ -447,80 +535,23 @@ const freecell = {
 			vars.H = this.valeurCarte(vars.B, vars.F);
 			if (vars.G + 1 === vars.H || vars.F === 0) {
 				// La carte A peut être placée sur la carte B ou que la colonne B est vide
-				mat.A[0][0]++; // enregistre l'action
-				mat.A[0][mat.A[0][0]] = vars.A;
-				mat.A[1][mat.A[0][0]] = vars.B;
-				if (vars.A <= 8) {
-					display.text(vars.A * 6 + 2, vars.E * 5 + 16, ' ');
-					for (let z = 1; z <= 5; z++) {
-						display.pixelOn(vars.A * 6 + 7, vars.E * 5 + 15 + z);
-					}
-				} else {
-					vars.A -= 8;
-					display.text(vars.A * 6 + 29, 10, ' ');
-					for (let z = 1; z <= 5; z++) {
-						display.pixelOn(vars.A * 6 + 34, 9 + z);
-					}
-					vars.A += 8;
-				}
-				display.pixelOn(vars.B * 6 + 2, vars.F * 5 + 21);
-				if (vars.C >= 3) display.pixelOn(vars.B * 6 + 5, vars.F * 5 + 23);
-				if (vars.C === 2 || vars.C === 4) display.pixelOn(vars.B * 6 + 5, vars.F * 5 + 22);
-
-				if (vars.G > 7) {
-					display.pixelOn(vars.B * 6 + 3, vars.F * 5 + 23);
-					vars.G -= 8;
-				}
-				if (vars.G > 3) {
-					display.pixelOn(vars.B * 6 + 4, vars.F * 5 + 23);
-					vars.G -= 4;
-				}
-				if (vars.G > 1) {
-					display.pixelOn(vars.B * 6 + 3, vars.F * 5 + 22);
-					vars.G -= 2;
-				}
-				if (vars.G > 0) {
-					display.pixelOn(vars.B * 6 + 4, vars.F * 5 + 22);
-				}
-
-				// Goto T
+				deplacement = true;
 			}
 		}
 		else {
 			if (!display.pixelTest((vars.B - 8) * 6 + 29, 10)) {
-				mat.A[0][0]++;
-				mat.A[0][mat.A[0][0]] = vars.A;
-				mat.A[1][mat.A[0][0]] = vars.B;
-
-				if (vars.A <= 8) {
-					display.text(vars.A * 6 + 2, vars.E * 5 + 16, ' ');
-					for (let z = 1; z <= 5; z++) {
-						display.pixelOn(vars.A * 6 + 7, vars.E * 5 + 15 + z);
-					}
-				}
-
-				display.pixelOn((vars.B - 8) * 6 + 29, 10);
-				if (vars.C >= 3) display.pixelOn((vars.B - 8) * 6 + 32, 12);
-				if (vars.C === 2 || vars.C === 4) display.pixelOn((vars.B - 8) * 6 + 32, 11);
-
-				if (vars.G > 7) {
-					display.pixelOn((vars.B - 8) * 6 + 30, 12);
-					vars.G -= 8;
-				}
-				if (vars.G > 3) {
-					display.pixelOn((vars.B - 8) * 6 + 31, 12);
-					vars.G -= 4;
-				}
-				if (vars.G > 1) {
-					display.pixelOn((vars.B - 8) * 6 + 30, 11);
-					vars.G -= 2;
-				}
-				if (vars.G > 0) {
-					display.pixelOn((vars.B - 8) * 6 + 31, 11);
-				}
-
-				// Goto T
+				// La zone temporaire est vide
+				deplacement = true;
 			}
+		}
+
+		if (deplacement) {
+			mat.A[0][0]++; // enregistre l'action
+			mat.A[0][mat.A[0][0]] = vars.A;
+			mat.A[1][mat.A[0][0]] = vars.B;
+			this.effacerCarte(vars.A, vars.E);
+			this.dessinerCarte(vars.B, vars.F, vars.C, vars.G);
+			// Goto T
 		}
 
 		// Goto T
@@ -534,28 +565,19 @@ const freecell = {
 	goTAS() {
 		vars.B = this.tailleColonneCarte(vars.A);
 		vars.C = this.couleurCarte(vars.A, vars.B);
-		vars.D = [vars.I, vars.J, vars.K, vars.L][vars.C - 1]; // Dernière carte dans le dépôt de la couleur
+		vars.D = this.valeurDepot(vars.C);
 		vars.E = this.valeurCarte(vars.A, vars.B);
 		if (vars.E === vars.D + 1) {
 			vars.D++;
 			mat.A[0][0]++;
 			mat.A[0][mat.A[0][0]] = vars.A;
 			mat.A[1][mat.A[0][0]] = vars.C + 12;
-			if (vars.A <= 8) {
-
-				display.text(vars.A * 6 + 2, vars.B * 5 + 16, ' ');
-				for (let z = 1; z <= 5; z++) {
-					display.pixelOn(vars.A * 6 + 7, vars.B * 5 + 15 + z);
-				}
-			} else {
-				display.text((vars.A - 8) * 6 + 29, 10, ' ');
-				for (let z = 1; z <= 5; z++) {
-					display.pixelOn((vars.A - 8) * 6 + 34, 9 + z);
-				}
-			}
+			this.effacerCarte(vars.A, vars.B);
 		}
-		// ????
-		vars.D = [vars.I, vars.J, vars.K, vars.L][vars.C - 1];
+		if (vars.C === 1) vars.I = vars.D;
+		if (vars.C === 2) vars.J = vars.D;
+		if (vars.C === 3) vars.K = vars.D;
+		if (vars.C === 4) vars.L = vars.D;
 		// Goto T
 	},
 
@@ -577,7 +599,7 @@ const freecell = {
 		if (vars.B > 12) {
 			// Annule un déplacement vers le dépôt
 			vars.C = vars.B - 12;
-			vars.H = [vars.I, vars.J, vars.K, vars.L][vars.C - 1];
+			vars.H = this.valeurDepot(vars.C);
 			if (vars.C === 1) vars.I--;
 			if (vars.C === 2) vars.J--;
 			if (vars.C === 3) vars.K--;
@@ -587,63 +609,12 @@ const freecell = {
 			vars.E = this.tailleColonneCarte(vars.B);
 			vars.C = this.couleurCarte(vars.B, vars.E);
 			vars.H = this.valeurCarte(vars.B, vars.E);
-			if (vars.B > 8) {
-				display.text((vars.B - 8) * 6 + 29, 10, ' ');
-				for (let z = 1; z <= 5; z++) {
-					display.pixelOn((vars.B - 8) * 6 + 34, 9 + z);
-				}
-			} else {
-				display.text(vars.B * 6 + 2, vars.E * 5 + 16, ' ');
-				for (let z = 1; z <= 5; z++) {
-					display.pixelOn(vars.B * 6 + 7, vars.E * 5 + 15 + z);
-				}
-			}
+			this.effacerCarte(vars.B, vars.E);
 		}
 
 		// A peut être dans les colonnes ou dans la zone temporaire
-		if (vars.A > 8) {
-			display.pixelOn((vars.A - 8) * 6 + 29, 10);
-			if (vars.C >= 3) display.pixelOn((vars.A - 8) * 6 + 32, 12);
-			if (vars.C === 2 || vars.C === 4) display.pixelOn((vars.A - 8) * 6 + 32, 11);
-
-			if (vars.H > 7) {
-				display.pixelOn((vars.A - 8) * 6 + 30, 12);
-				vars.H -= 8;
-			}
-			if (vars.H > 3) {
-				display.pixelOn((vars.A - 8) * 6 + 31, 12);
-				vars.H -= 4;
-			}
-			if (vars.H > 1) {
-				display.pixelOn((vars.A - 8) * 6 + 30, 11);
-				vars.H -= 2;
-			}
-			if (vars.H > 0) {
-				display.pixelOn((vars.A - 8) * 6 + 31, 11);
-			}
-		}
-		else {
-			vars.F = this.tailleColonneCarte(vars.A);
-			display.pixelOn(vars.A * 6 + 2, vars.F * 5 + 21);
-			if (vars.C >= 3) display.pixelOn(vars.A * 6 + 5, vars.F * 5 + 23);
-			if (vars.C === 2 || vars.C === 4) display.pixelOn(vars.A * 6 + 5, vars.F * 5 + 22);
-
-			if (vars.H > 7) {
-				display.pixelOn(vars.A * 6 + 3, vars.F * 5 + 23);
-				vars.H -= 8;
-			}
-			if (vars.H > 3) {
-				display.pixelOn(vars.A * 6 + 4, vars.F * 5 + 23);
-				vars.H -= 4;
-			}
-			if (vars.H > 1) {
-				display.pixelOn(vars.A * 6 + 3, vars.F * 5 + 22);
-				vars.H -= 2;
-			}
-			if (vars.H > 0) {
-				display.pixelOn(vars.A * 6 + 4, vars.F * 5 + 22);
-			}
-		}
+		var tailleColonneA = this.tailleColonneCarte(vars.A);
+		this.dessinerCarte(vars.A, tailleColonneA, vars.C, vars.H);
 
 		mat.A[0][0]--;
 		// Goto T
@@ -678,24 +649,14 @@ const freecell = {
 			if (vars.E === 0) continue; // Pas de carte dans la colonne
 			vars.C = this.couleurCarte(vars.A, vars.E);
 			vars.G = this.valeurCarte(vars.A, vars.E);
-			vars.H = [vars.I, vars.J, vars.K, vars.L][vars.C - 1];
+			vars.H = this.valeurDepot(vars.C);
 			if (vars.G === vars.H + 1) {
 				// Goto R
 				vars.H++;
 				mat.A[0][0]++;
 				mat.A[0][mat.A[0][0]] = vars.A;
 				mat.A[1][mat.A[0][0]] = vars.C + 12;
-				if (vars.A <= 8) {
-					display.text(vars.A * 6 + 2, vars.E * 5 + 16, ' ');
-					for (let z = 1; z <= 5; z++) {
-						display.pixelOn(vars.A * 6 + 7, vars.E * 5 + 15 + z);
-					}
-				} else {
-					display.text((vars.A - 8) * 6 + 29, 10, ' ');
-					for (let z = 1; z <= 5; z++) {
-						display.pixelOn((vars.A - 8) * 6 + 34, 9 + z);
-					}
-				}
+				this.effacerCarte(vars.A, vars.E);
 			}
 		}
 
