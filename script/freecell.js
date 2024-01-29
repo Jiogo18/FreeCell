@@ -8,60 +8,6 @@
  * Taille : 6080 octets
  */
 
-class DisplayGraphCasio {
-	constructor() {
-		/** @type {HTMLCanvasElement} */
-		this.canvas = document.getElementById('display');
-		/** @type {CanvasRenderingContext2D} */
-		this.ctx = this.canvas.getContext('2d');
-		this.canvas.width = 128;
-		this.canvas.height = 64;
-		this.ctx.fillStyle = 'black';
-		this.clear();
-	}
-
-	clear() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	}
-
-	fline(x1, y1, x2, y2) {
-		this.ctx.fillRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-	}
-
-	text(x, y, text) {
-		this.ctx.fillText(text, x, y);
-	}
-
-	pixels = [];
-	#setPixel(x, y, value) {
-		const index = y * this.canvas.width + x;
-		this.pixels[index] = value;
-	}
-	#getPixel(x, y) {
-		const index = y * this.canvas.width + x;
-		return this.pixels[index];
-	}
-
-	pixelOn(x, y) {
-		this.ctx.fillRect(x, y, 1, 1);
-		this.#setPixel(x, y, true);
-	}
-
-	pixelOff(x, y) {
-		this.ctx.clearRect(x, y, 1, 1);
-		this.#setPixel(x, y, false);
-	}
-
-	pixelTest(x, y) {
-		return this.#getPixel(x, y);
-	}
-
-	pixelChange(x, y) {
-		if (this.pixelTest(x, y)) this.pixelOn(x, y);
-		else this.pixelOff(x, y);
-	}
-}
-
 /**
  * Variables globales
  * A et B sont la position du curseur de sélection
@@ -99,13 +45,14 @@ const waitForNewKey = async () => {
 		else if (passeA0 && getKey) resolve(getKey);
 	}, 10));
 }
+const sleep = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const freecell = {
 	/**
 	 * Question pour charger une partie en cours
 	 * @Prédécesseurs : rien
 	 * @Sucesseurs : reset, pause
 	 */
-	choixCharger() {
+	async choixCharger() {
 		console.log('+ Choix charger');
 		vars.S = 0; // Pour éviter d'enregistrer la valeur quand on quitte
 		// Entrée utilisateur "Charger la partie "?->vars.S
@@ -115,7 +62,7 @@ const freecell = {
 		}
 		console.log('- Choix charger');
 
-		this.reset();
+		await this.reset();
 		return false;
 	},
 
@@ -124,7 +71,7 @@ const freecell = {
 	 * @Prédécesseurs : choixCharger
 	 * @Sucesseurs : affichage
 	 */
-	reset() {
+	async reset() {
 		console.log('+ Reset');
 		for (let i = 0; i <= 9; i++) str[i] = '';
 		for (let a = 1; a <= 52; a++) {
@@ -139,7 +86,7 @@ const freecell = {
 		resetVars();
 
 		console.log('- Reset');
-		this.affichageInit();
+		await this.affichageInit();
 	},
 
 	/**
@@ -147,11 +94,11 @@ const freecell = {
 	 * @Prédécesseurs : reset
 	 * @Sucesseurs : taille
 	 */
-	affichageInit() {
+	async affichageInit() {
 		console.log('+ Affichage init');
 		display.clear();
-		for (let y = 7; y < 55; y += 6) display.fline(20, y, 100, y);
-		for (let x = 20; x < 100; x += 10) display.fline(x, 7, x, 55);
+		for (let y = 7; y <= 55; y += 6) display.fline(20, y, 100, y);
+		for (let x = 20; x <= 100; x += 5) display.fline(x, 7, x, 55);
 
 		display.text(55, 123, '%');
 		for (vars.A = 21; vars.A <= 51; vars.A += 5) {
@@ -159,6 +106,7 @@ const freecell = {
 
 				// Affichage de la progression
 				display.text(55, 115, 100 - int(str[9].length / 1.04));
+				await sleep(20); // Temps de chargement simulé
 
 				if (str[9].length != 2) {
 					// Choisis une carte aléatoirement
@@ -170,6 +118,7 @@ const freecell = {
 
 				// Extraire la carte de str[9] vers str[10]
 				str[10] = str[9].slice(vars.C - 1, vars.C + 1);
+				str[9] = str[9].slice(0, vars.C - 1) + str[9].slice(vars.C + 1);
 
 				// (Version d'origine : une boucle compliquée pour convertir en nombre)
 				vars.D = parseInt(str[10]);
@@ -324,7 +273,7 @@ const freecell = {
 
 	/**
 	 * Sélecteur de la carte A
-	 * @Prédécesseurs : partieSansNom1, selecteur2, deplace, cancel, auto
+	 * @Prédécesseurs : rien
 	 * @Sucesseurs : auto, pause, cancel, goTAS, selecteur2
 	 * Lbl S
 	 */
@@ -788,7 +737,7 @@ const freecell = {
 	},
 
 	async main() {
-		if (this.choixCharger()) {
+		if (await this.choixCharger()) {
 			// Charge la partie en cours
 			await this.pause(); // Goto P
 		}

@@ -8,49 +8,6 @@
  * Taille : 6080 octets
  */
 
-class DisplayGraphCasio {
-	constructor() {
-		this.canvas = document.getElementById('display');
-		this.ctx = this.canvas.getContext('2d');
-		this.canvas.width = 128;
-		this.canvas.height = 64;
-		this.ctx.fillStyle = 'black';
-		this.clear();
-	}
-
-	clear() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	}
-
-	fline(x1, y1, x2, y2) {
-		this.ctx.beginPath();
-		this.ctx.moveTo(x1, y1);
-		this.ctx.lineTo(x2, y2);
-		this.ctx.stroke();
-	}
-
-	text(x, y, text) {
-		this.ctx.fillText(text, x, y);
-	}
-
-	pixelOn(x, y) {
-		this.ctx.fillRect(x, y, 1, 1);
-	}
-
-	pixelOff(x, y) {
-		this.ctx.clearRect(x, y, 1, 1);
-	}
-
-	pixelTest(x, y) {
-		return this.ctx.getImageData(x, y, 1, 1).data[0] == 0;
-	}
-
-	pixelChange(x, y) {
-		if (this.pixelTest(x, y)) this.pixelOn(x, y);
-		else this.pixelOff(x, y);
-	}
-}
-
 /**
  * Variables globales
  * A et B sont la position du curseur de sélection
@@ -110,7 +67,7 @@ const freecell = {
 			if (a < 10) str[9] += '0';
 			for (let b = 1 + int(log(a)); b >= 1; b--) {
 				// str[9] += "0123456789"[int(10 * frac(a / Math.pow(10, b)))];
-				str[9] += '' + int(10 * frac(a / Math.pow(10, b)));
+				str[9] += '' + int(10 * frac(a / Math.pow(10, b)) + 1e-6); // +1e-6 car 0.999999
 			}
 		}
 		mat.A = [[0, 0], [1, 0]];
@@ -125,8 +82,8 @@ const freecell = {
 	 */
 	affichageCasio(display) {
 		display.clear();
-		for (let y = 7; y < 55; y += 6) display.fline(20, y, 100, y);
-		for (let x = 20; x < 100; x += 10) display.fline(x, 7, x, 55);
+		for (let y = 7; y <= 55; y += 6) display.fline(20, y, 100, y);
+		for (let x = 20; x <= 100; x += 5) display.fline(x, 7, x, 55);
 
 		display.text(55, 123, '%');
 		for (vars.A = 21; vars.A <= 51; vars.A += 5) {
@@ -145,6 +102,7 @@ const freecell = {
 
 				// Extraire la carte de str[9] vers str[10]
 				str[10] = str[9].slice(vars.C - 1, vars.C + 1);
+				str[9] = str[9].slice(0, vars.C - 1) + str[9].slice(vars.C + 1);
 
 				// (Version d'origine : une boucle compliquée pour convertir en nombre)
 				vars.D = parseInt(str[10]);
