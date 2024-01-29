@@ -278,6 +278,7 @@ const freecell = {
 	 * Lbl S
 	 */
 	async selecteur() {
+		vars.A = 1;
 		do {
 			console.log('+ Selecteur');
 			display.text(1, 120, ' ');
@@ -296,12 +297,12 @@ const freecell = {
 				case 'Escape': // 47, Exit
 					this.cancel(); // Goto A
 					break;
-				case 'ArrowUp': // 37, Flèche haut
-					vars.A++;
+				case 'ArrowUp': // 28, Flèche haut
+					vars.A--;
 					deplacement = true;
 					break;
-				case 'ArrowDown': // 28, Flèche bas
-					vars.A--;
+				case 'ArrowDown': // 37, Flèche bas
+					vars.A++;
 					deplacement = true;
 					break;
 				case '1': // 72
@@ -361,11 +362,11 @@ const freecell = {
 				case 'Escape': // 47, Exit
 					// Retourner au selecteur 1, Goto S
 					return;
-				case 'ArrowUp': // 37, Flèche haut
-					vars.B++;
-					break;
-				case 'ArrowDown': // 28, Flèche bas
+				case 'ArrowUp': // 28, Flèche haut
 					vars.B--;
+					break;
+				case 'ArrowDown': // 37, Flèche bas
+					vars.B++;
 					break;
 				case '1': // 72
 				case '2': // 62

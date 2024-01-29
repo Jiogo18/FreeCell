@@ -93,6 +93,12 @@ class DisplayGraphCasio {
 					this.ctx.fillRect(x + i + 1, y + i, 1, 5 - 2 * i);
 				}
 				break;
+				case '<':
+					this.ctx.fillRect(x + 3, y, 1, 5);
+					for (let i = 0; i < 3; i++) {
+						this.ctx.fillRect(x + 2 - i, y + i, 1, 5 - 2 * i);
+					}
+					break;
 			case '0':
 				this.ctx.fillRect(x, y, 3, 5);
 				this.ctx.clearRect(x + 1, y + 1, 1, 3);
