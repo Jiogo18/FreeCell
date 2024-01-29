@@ -279,8 +279,8 @@ const freecell = {
 	 */
 	async selecteur() {
 		vars.A = 1;
+		console.log('+ Selecteur');
 		do {
-			console.log('+ Selecteur');
 			display.text(1, 120, ' ');
 			vars.theta = 0;
 			await waitForNewKey();
