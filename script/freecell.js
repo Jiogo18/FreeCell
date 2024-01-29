@@ -293,9 +293,11 @@ const freecell = {
 					this.cancel(); // Goto A
 					break;
 				case 'ArrowUp': // 28, Flèche haut
-					vars.A--;
-					break;
+				case 'ArrowRight':
+				vars.A--;
+				break;
 				case 'ArrowDown': // 37, Flèche bas
+				case 'ArrowLeft':
 					vars.A++;
 					break;
 				case '1': // 72
@@ -346,9 +348,11 @@ const freecell = {
 					// Retourner au selecteur 1, Goto S
 					return;
 				case 'ArrowUp': // 28, Flèche haut
+				case 'ArrowRight':
 					vars.B--;
 					break;
 				case 'ArrowDown': // 37, Flèche bas
+				case 'ArrowLeft':
 					vars.B++;
 					break;
 				case '1': // 72
