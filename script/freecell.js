@@ -179,29 +179,29 @@ const freecell = {
 	 */
 	tas() {
 		console.log('+ TAS');
-		for (vars.A = 1; vars.A <= 4; vars.A++) {
-			if (vars.A === 1) vars.B = vars.I;
-			if (vars.A === 2) vars.B = vars.J;
-			if (vars.A === 3) vars.B = vars.K;
-			if (vars.A === 4) vars.B = vars.L;
-			display.pixelOff(vars.A * 6, 12);
-			display.pixelOff(vars.A * 6 + 1, 12);
-			display.pixelOff(vars.A * 6, 11);
-			display.pixelOff(vars.A * 6 + 1, 11);
+		for (let A = 1; A <= 4; A++) {
+			if (A === 1) vars.B = vars.I;
+			if (A === 2) vars.B = vars.J;
+			if (A === 3) vars.B = vars.K;
+			if (A === 4) vars.B = vars.L;
+			display.pixelOff(A * 6, 12);
+			display.pixelOff(A * 6 + 1, 12);
+			display.pixelOff(A * 6, 11);
+			display.pixelOff(A * 6 + 1, 11);
 			if (vars.B > 7) {
-				display.pixelOn(vars.A * 6, 12);
+				display.pixelOn(A * 6, 12);
 				vars.B -= 8;
 			}
 			if (vars.B > 3) {
-				display.pixelOn(vars.A * 6 + 1, 12);
+				display.pixelOn(A * 6 + 1, 12);
 				vars.B -= 4;
 			}
 			if (vars.B > 1) {
-				display.pixelOn(vars.A * 6, 11);
+				display.pixelOn(A * 6, 11);
 				vars.B -= 2;
 			}
 			if (vars.B > 0) {
-				display.pixelOn(vars.A * 6 + 1, 11);
+				display.pixelOn(A * 6 + 1, 11);
 			}
 		}
 		if (vars.I + vars.J + vars.K + vars.L === 52) {
@@ -222,40 +222,40 @@ const freecell = {
 	 */
 	taille() {
 		console.log('+ Taille');
-		for (vars.A = 1; vars.A <= 8; vars.A++) {
+		for (let A = 1; A <= 8; A++) {
 			vars.B = 0;
-			while (display.pixelTest(vars.A * 6 + 2, vars.B * 5 + 21)) {
+			while (display.pixelTest(A * 6 + 2, vars.B * 5 + 21)) {
 				vars.B++;
 				if (vars.B > 1000) throw new Error('Boucle infinie');
 			}
-			if (vars.A === 1) vars.U = vars.B;
-			if (vars.A === 2) vars.V = vars.B;
-			if (vars.A === 3) vars.W = vars.B;
-			if (vars.A === 4) vars.P = vars.B;
-			if (vars.A === 5) vars.Q = vars.B;
-			if (vars.A === 6) vars.R = vars.B;
-			if (vars.A === 7) vars.M = vars.B;
-			if (vars.A === 8) vars.N = vars.B;
+			if (A === 1) vars.U = vars.B;
+			if (A === 2) vars.V = vars.B;
+			if (A === 3) vars.W = vars.B;
+			if (A === 4) vars.P = vars.B;
+			if (A === 5) vars.Q = vars.B;
+			if (A === 6) vars.R = vars.B;
+			if (A === 7) vars.M = vars.B;
+			if (A === 8) vars.N = vars.B;
 		}
 
 		console.log('- Taille');
-		this.partieSansNom1();
+		this.effaceCurseurs();
 	},
 
 	/**
-	 * Affichage du curseur de sélection de la colonne
+	 * Efface les curseurs, prépare l'historique mat.A,
+	 * appel theta si le mode automatique est activé
 	 * @Prédécesseurs : taille
 	 * @Sucesseurs : selecteur, auto
 	 */
-	partieSansNom1() {
-		console.log('+ Partie sans nom 1');
+	effaceCurseurs() {
+		console.log('+ efface curseurs');
 		for (let Y = 8; Y <= 50; Y += 6) {
 			display.text(Y, 105, ' ');
 		}
 		for (let Y = 35; Y <= 53; Y += 6) {
 			display.text(Y, 4, ' ');
 		}
-		display.text(8, 105, '>');
 		if (mat.A[0][0] === mat.A[1][0]) {
 			mat.A[1][0]++;
 			// Augment(mat A, [[0],[0]]) permet d'agrandir la matrice A
@@ -263,12 +263,12 @@ const freecell = {
 			mat.A[1].push(0);
 		}
 		if (vars.theta === 1) {
-			console.log('- Partie sans nom 1');
+			console.log('- efface curseurs');
 			this.theta(); // Goto theta
 			return;
 		}
 		// retourne jusqu'à la boucle du selecteur
-		console.log('- Partie sans nom 1');
+		console.log('- efface curseurs');
 	},
 
 	/**
@@ -279,16 +279,16 @@ const freecell = {
 	 */
 	async selecteur() {
 		vars.A = 1;
+		display.text(8, 105, '>');
 		console.log('+ Selecteur');
 		do {
 			display.text(1, 120, ' ');
 			vars.theta = 0;
 			await waitForNewKey();
 
-			let deplacement = false;
 			switch (getKey) {
 				case 'a': // 77 Résolution automatique
-					this.auto(); // Goto theta
+					await this.auto(); // Goto theta
 					break;
 				case '0': // 71 Pause
 					// Goto P
@@ -299,11 +299,9 @@ const freecell = {
 					break;
 				case 'ArrowUp': // 28, Flèche haut
 					vars.A--;
-					deplacement = true;
 					break;
 				case 'ArrowDown': // 37, Flèche bas
 					vars.A++;
-					deplacement = true;
 					break;
 				case '1': // 72
 				case '2': // 62
@@ -315,14 +313,12 @@ const freecell = {
 				case '8': // 64
 				case '9': // 54
 					vars.A = parseInt(getKey);
-					deplacement = true;
 					break;
-				case 'S': // 78, Shift
+				case 's': // 78, Shift
 					this.goTAS(); // Goto R
 					break;
 				case 'Enter': // 31, Exe
-					vars.B = 1;
-					display.text(8, 110, '<');
+				case ' ':
 					await this.selecteur2();
 					break;
 				default:
@@ -331,16 +327,14 @@ const freecell = {
 			}
 			if (vars.A > 12) vars.A = 1;
 			if (vars.A < 1) vars.A = 12;
-			if (deplacement) {
-				for (let Y = 8; Y <= 50; Y += 6) {
-					display.text(Y, 105, ' ');
-				}
-				for (let Y = 35; Y <= 53; Y += 6) {
-					display.text(Y, 4, ' ');
-				}
-				if (vars.A > 8) display.text((vars.A - 8) * 6 + 29, 4, '<');
-				else display.text(vars.A * 6 + 2, 105, '>');
+			for (let Y = 8; Y <= 50; Y += 6) {
+				display.text(Y, 105, ' ');
 			}
+			for (let Y = 35; Y <= 53; Y += 6) {
+				display.text(Y, 4, ' ');
+			}
+			if (vars.A > 8) display.text((vars.A - 8) * 6 + 29, 4, '<');
+			else display.text(vars.A * 6 + 2, 105, '>');
 
 			// Boucle dans le selecteur, Goto S
 		} while (1);
@@ -353,8 +347,10 @@ const freecell = {
 	 * Lbl C
 	 */
 	async selecteur2() {
+		vars.B = 1;
+		display.text(8, 110, '<');
+		console.log('+ Selecteur 2');
 		do {
-			console.log('+ Selecteur 2');
 			await waitForNewKey();
 			if (vars.B > 8) display.text((vars.B - 8) * 6 + 29, 1, ' ');
 			else display.text(vars.B * 6 + 2, 110, ' ');
@@ -378,9 +374,9 @@ const freecell = {
 				case '8': // 64
 				case '9': // 54
 					vars.B = parseInt(getKey);
-					deplacement = true;
 					break;
 				case 'Enter': // 31, Exe
+				case ' ':
 					const varsUVW = [vars.U, vars.V, vars.W, vars.P, vars.Q, vars.R, vars.M, vars.N];
 					if (vars.A === vars.B || vars.A > 8 && vars.B > 8 || (vars.B <= 8 && varsUVW[vars.B - 1] === 16)) {
 						// Boucle dans le selecteur 2, Goto C
@@ -396,16 +392,14 @@ const freecell = {
 
 			if (vars.B > 12) vars.B = 1;
 			if (vars.B < 1) vars.B = 12;
-			if (deplacement) {
-				for (let Y = 8; Y <= 50; Y += 6) {
-					display.text(Y, 110, ' ');
-				}
-				for (let Y = 35; Y <= 53; Y += 6) {
-					display.text(Y, 1, ' ');
-				}
-				if (vars.B > 8) display.text((vars.B - 8) * 6 + 29, 1, '>');
-				else display.text(vars.B * 6 + 2, 110, '<');
+			for (let Y = 8; Y <= 50; Y += 6) {
+				display.text(Y, 110, ' ');
 			}
+			for (let Y = 35; Y <= 53; Y += 6) {
+				display.text(Y, 1, ' ');
+			}
+			if (vars.B > 8) display.text((vars.B - 8) * 6 + 29, 1, '>');
+			else display.text(vars.B * 6 + 2, 110, '<');
 
 			// Boucle dans le selecteur 2, Goto C
 		} while (1);
@@ -688,23 +682,24 @@ const freecell = {
 	 * Garde le mode automatique tant qu'il y a des déplacements possibles.
 	 * Lbl theta
 	 */
-	auto() {
+	async auto() {
 		console.log('+ Auto');
 		display.text(1, 120, 'A');
+		await sleep(100); // Temps de chargement simulé
 		vars.theta = 1;
-		for (vars.A = 1; vars.A <= 12; vars.A++) {
-			vars.E = this.tailleColonneCarte(vars.A);
+		for (let A = 1; A <= 12; A++) {
+			vars.E = this.tailleColonneCarte(A);
 			if (vars.E === 0) continue; // Pas de carte dans la colonne
-			vars.C = this.couleurCarte(vars.A, vars.E);
-			vars.G = this.valeurCarte(vars.A, vars.E);
+			vars.C = this.couleurCarte(A, vars.E);
+			vars.G = this.valeurCarte(A, vars.E);
 			vars.H = this.valeurDepot(vars.C);
 			if (vars.G === vars.H + 1) {
 				// Goto R
 				vars.H++;
 				mat.A[0][0]++;
-				mat.A[0][mat.A[0][0]] = vars.A;
+				mat.A[0][mat.A[0][0]] = A;
 				mat.A[1][mat.A[0][0]] = vars.C + 12;
-				this.effacerCarte(vars.A, vars.E);
+				this.effacerCarte(A, vars.E);
 			}
 		}
 
