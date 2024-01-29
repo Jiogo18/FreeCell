@@ -10,7 +10,9 @@
 
 class DisplayGraphCasio {
 	constructor() {
+		/** @type {HTMLCanvasElement} */
 		this.canvas = document.getElementById('display');
+		/** @type {CanvasRenderingContext2D} */
 		this.ctx = this.canvas.getContext('2d');
 		this.canvas.width = 128;
 		this.canvas.height = 64;
@@ -23,26 +25,35 @@ class DisplayGraphCasio {
 	}
 
 	fline(x1, y1, x2, y2) {
-		this.ctx.beginPath();
-		this.ctx.moveTo(x1, y1);
-		this.ctx.lineTo(x2, y2);
-		this.ctx.stroke();
+		this.ctx.fillRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 	}
 
 	text(x, y, text) {
 		this.ctx.fillText(text, x, y);
 	}
 
+	pixels = [];
+	#setPixel(x, y, value) {
+		const index = y * this.canvas.width + x;
+		this.pixels[index] = value;
+	}
+	#getPixel(x, y) {
+		const index = y * this.canvas.width + x;
+		return this.pixels[index];
+	}
+
 	pixelOn(x, y) {
 		this.ctx.fillRect(x, y, 1, 1);
+		this.#setPixel(x, y, true);
 	}
 
 	pixelOff(x, y) {
 		this.ctx.clearRect(x, y, 1, 1);
+		this.#setPixel(x, y, false);
 	}
 
 	pixelTest(x, y) {
-		return this.ctx.getImageData(x, y, 1, 1).data[0] == 0;
+		return this.#getPixel(x, y);
 	}
 
 	pixelChange(x, y) {
@@ -84,7 +95,7 @@ const waitForNewKey = async () => {
 	// Attendre un nouvel appui sur une touche sans bloquer le thread
 	var passeA0 = false; // Si getkey est tombé à 0 (touche relâchée)
 	await new Promise((resolve) => setInterval(() => {
-		if(!passeA0 && getKey === 0) passeA0 = true;
+		if (!passeA0 && getKey === 0) passeA0 = true;
 		else if (passeA0 && getKey) resolve(getKey);
 	}, 10));
 }
@@ -95,12 +106,14 @@ const freecell = {
 	 * @Sucesseurs : reset, pause
 	 */
 	choixCharger() {
+		console.log('+ Choix charger');
 		vars.S = 0; // Pour éviter d'enregistrer la valeur quand on quitte
 		// Entrée utilisateur "Charger la partie "?->vars.S
 		if (vars.S === 1) {
 			// Goto P
 			return true;
 		}
+		console.log('- Choix charger');
 
 		this.reset();
 		return false;
@@ -112,18 +125,20 @@ const freecell = {
 	 * @Sucesseurs : affichage
 	 */
 	reset() {
-		for (let i = 0; i < 9; i++) str[i] = '';
+		console.log('+ Reset');
+		for (let i = 0; i <= 9; i++) str[i] = '';
 		for (let a = 1; a <= 52; a++) {
 			if (a < 10) str[9] += '0';
 			for (let b = 1 + int(log(a)); b >= 1; b--) {
 				// str[9] += "0123456789"[int(10 * frac(a / Math.pow(10, b)))];
-				str[9] += '' + int(10 * frac(a / Math.pow(10, b)));
+				str[9] += '' + int(10 * frac(a / Math.pow(10, b)) + 1e-6); // +1e-6 car 0.999999
 			}
 		}
 		mat.A = [[0, 0], [1, 0]];
 		vars.theta = 0;
 		resetVars();
 
+		console.log('- Reset');
 		this.affichageInit();
 	},
 
@@ -133,6 +148,7 @@ const freecell = {
 	 * @Sucesseurs : taille
 	 */
 	affichageInit() {
+		console.log('+ Affichage init');
 		display.clear();
 		for (let y = 7; y < 55; y += 6) display.fline(20, y, 100, y);
 		for (let x = 20; x < 100; x += 10) display.fline(x, 7, x, 55);
@@ -202,6 +218,7 @@ const freecell = {
 		display.pixelOn(26, 12);
 		resetVars();
 
+		console.log('- Affichage init');
 		this.tas();
 	},
 
@@ -212,6 +229,7 @@ const freecell = {
 	 * Lbl T:'TAS
 	 */
 	tas() {
+		console.log('+ TAS');
 		for (vars.A = 1; vars.A <= 4; vars.A++) {
 			if (vars.A === 1) vars.B = vars.I;
 			if (vars.A === 2) vars.B = vars.J;
@@ -238,10 +256,12 @@ const freecell = {
 			}
 		}
 		if (vars.I + vars.J + vars.K + vars.L === 52) {
+			console.log('- TAS');
 			this.gagne(); // Goto G
 			return;
 		}
 
+		console.log('- TAS');
 		this.taille();
 	},
 
@@ -252,10 +272,12 @@ const freecell = {
 	 * @Sucesseurs : partieSansNom1
 	 */
 	taille() {
+		console.log('+ Taille');
 		for (vars.A = 1; vars.A <= 8; vars.A++) {
 			vars.B = 0;
 			while (display.pixelTest(vars.A * 6 + 2, vars.B * 5 + 21)) {
 				vars.B++;
+				if (vars.B > 1000) throw new Error('Boucle infinie');
 			}
 			if (vars.A === 1) vars.U = vars.B;
 			if (vars.A === 2) vars.V = vars.B;
@@ -267,6 +289,7 @@ const freecell = {
 			if (vars.A === 8) vars.N = vars.B;
 		}
 
+		console.log('- Taille');
 		this.partieSansNom1();
 	},
 
@@ -276,6 +299,7 @@ const freecell = {
 	 * @Sucesseurs : selecteur, auto
 	 */
 	partieSansNom1() {
+		console.log('+ Partie sans nom 1');
 		for (let Y = 8; Y <= 50; Y += 6) {
 			display.text(Y, 105, ' ');
 		}
@@ -290,10 +314,12 @@ const freecell = {
 			mat.A[1].push(0);
 		}
 		if (vars.theta === 1) {
+			console.log('- Partie sans nom 1');
 			this.theta(); // Goto theta
 			return;
 		}
 		// retourne jusqu'à la boucle du selecteur
+		console.log('- Partie sans nom 1');
 	},
 
 	/**
@@ -304,6 +330,7 @@ const freecell = {
 	 */
 	async selecteur() {
 		do {
+			console.log('+ Selecteur');
 			display.text(1, 120, ' ');
 			vars.theta = 0;
 			await waitForNewKey();
@@ -377,6 +404,7 @@ const freecell = {
 	 */
 	async selecteur2() {
 		do {
+			console.log('+ Selecteur 2');
 			await waitForNewKey();
 			if (vars.B > 8) display.text((vars.B - 8) * 6 + 29, 1, ' ');
 			else display.text(vars.B * 6 + 2, 110, ' ');
@@ -565,6 +593,7 @@ const freecell = {
 	 * @Sucesseurs : selecteur, TAS
 	 */
 	deplace() {
+		console.log('+ Deplace');
 		vars.E = this.tailleColonneCarte(vars.A); // Taille de la colonne A / Position de la carte dans la colonne
 		vars.C = this.couleurCarte(vars.A, vars.E); // Couleur de la carte A
 		vars.G = this.valeurCarte(vars.A, vars.E); // Valeur de la carte A
@@ -576,6 +605,7 @@ const freecell = {
 			// Colonnes
 			if ((vars.D === 1 || vars.D === 4) === (vars.C === 1 || vars.C === 4)) {
 				// Couleur noire (pique ou trèfle) des deux cartes
+				console.log('- Deplace');
 				return; // Goto S
 			}
 
@@ -601,6 +631,7 @@ const freecell = {
 			// Goto T
 		}
 
+		console.log('- Deplace');
 		this.tas(); // Goto T
 	},
 
@@ -613,6 +644,7 @@ const freecell = {
 	 * Lbl R
 	 */
 	goTAS() {
+		console.log('+ GO TAS');
 		vars.B = this.tailleColonneCarte(vars.A);
 		vars.C = this.couleurCarte(vars.A, vars.B);
 		vars.D = this.valeurDepot(vars.C);
@@ -628,6 +660,7 @@ const freecell = {
 		if (vars.C === 2) vars.J = vars.D;
 		if (vars.C === 3) vars.K = vars.D;
 		if (vars.C === 4) vars.L = vars.D;
+		console.log('- GO TAS');
 		this.tas(); // Goto T
 	},
 
@@ -639,8 +672,10 @@ const freecell = {
 	 * Lbl A
 	 */
 	cancel() {
+		console.log('+ Cancel');
 		if (mat.A[0][0] === 0) {
-			// Goto S
+			console.log('- Cancel');
+			return; // Goto S
 		}
 		vars.A = mat.A[0][mat.A[0][0]];
 		mat.A[0][mat.A[0][0]] = 0;
@@ -669,7 +704,8 @@ const freecell = {
 		this.dessinerCarte(vars.A, tailleColonneA, vars.C, vars.H);
 
 		mat.A[0][0]--;
-		// Goto T
+		console.log('- Cancel');
+		this.tas(); // Goto T
 	},
 
 	/**
@@ -679,6 +715,7 @@ const freecell = {
 	 * Lbl P
 	 */
 	async pause() {
+		console.log('+ Pause');
 		if (vars.S === 1) {
 			vars.S = 0;
 		}
@@ -689,7 +726,8 @@ const freecell = {
 			await waitForNewKey();
 		} while (getKey !== 'Enter');
 		// Recharger l'affichage
-		// Goto T
+		console.log('- Pause');
+		this.tas(); // Goto T
 	},
 
 	/**
@@ -701,6 +739,7 @@ const freecell = {
 	 * Lbl theta
 	 */
 	auto() {
+		console.log('+ Auto');
 		display.text(1, 120, 'A');
 		vars.theta = 1;
 		for (vars.A = 1; vars.A <= 12; vars.A++) {
@@ -719,7 +758,8 @@ const freecell = {
 			}
 		}
 
-		// Goto S
+		console.log('- Auto');
+		return; // Goto S
 	},
 
 	/**
@@ -729,6 +769,7 @@ const freecell = {
 	 * Lbl G
 	 */
 	gagne() {
+		console.log('+ Gagne');
 		for (let B = 96; B >= 21; B -= 5) {
 			if (B === 92) B = 93;
 			for (let A = 8; A <= 50; A += 6) {
@@ -742,6 +783,8 @@ const freecell = {
 		display.text(40, 42, mat.A[0][0]);
 		display.text(40, 58, 'coups');
 		display.pixelOff(1, 1);
+		console.log('- Gagne');
+		throw new Error('Gagné');
 	},
 
 	async main() {
@@ -749,6 +792,14 @@ const freecell = {
 			// Charge la partie en cours
 			await this.pause(); // Goto P
 		}
-		await this.selecteur();
+		try {
+			await this.selecteur();
+		} catch (e) {
+			if (e.message === 'Gagné') {
+				console.log('Gagné');
+			} else {
+				console.error(e);
+			}
+		}
 	}
 }

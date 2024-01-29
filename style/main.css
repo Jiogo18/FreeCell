@@ -5,4 +5,5 @@ body {
 canvas#display {
 	width: 256px;
 	border: 1px solid #000;
+	image-rendering: pixelated;
 }

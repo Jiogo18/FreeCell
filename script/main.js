@@ -2,6 +2,7 @@ var getKeySpan;
 document.addEventListener('DOMContentLoaded', () => {
 	display = new DisplayGraphCasio();
 	getKeySpan = document.getElementById('getkey');
+	freecell.main();
 });
 document.addEventListener('keydown', (e) => {
 	getKey = e.key;
