@@ -129,7 +129,7 @@ const freecell = {
 				while (vars.D > 13) {
 					vars.D -= 13;
 					display.pixelChange(vars.B + 3, vars.A + 1);
-					if (display.pixelTest(vars.B + 3, vars.A + 1)) {
+					if (!display.pixelTest(vars.B + 3, vars.A + 1)) {
 						display.pixelOn(vars.B + 3, vars.A + 2);
 					}
 				}

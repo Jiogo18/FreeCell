@@ -11,6 +11,7 @@ class DisplayGraphCasio {
 		this.ctx = this.canvas.getContext('2d');
 		this.canvas.width = 128;
 		this.canvas.height = 64;
+		this.longueur = 128;
 		this.ctx.fillStyle = 'black';
 		this.clear();
 	}
@@ -60,6 +61,7 @@ class DisplayGraphCasio {
 			case '7':
 			case '8':
 			case '9':
+			case 'A':
 				// Tailles différentes selon les caractères
 				largeur = 4;
 				break;
@@ -167,6 +169,12 @@ class DisplayGraphCasio {
 				this.fillRect(x + 2, y + 3, 1, 1);
 				this.fillRect(x, y + 4, 3, 1);
 				break;
+			case 'A':
+				this.fillRect(x + 1, y, 1, 1);
+				this.fillRect(x, y + 1, 1, 4);
+				this.fillRect(x + 2, y + 1, 1, 4);
+				this.fillRect(x + 1, y + 2, 1, 1);
+				break;
 			default:
 				console.warn('Texte inconnu :', text);
 		}
@@ -175,12 +183,12 @@ class DisplayGraphCasio {
 
 	pixels = [];
 	#setPixel(x, y, value) {
-		const index = y * this.canvas.width + x;
+		const index = y * this.longueur + x;
 		this.pixels[index] = value;
 	}
 	#getPixel(x, y) {
-		const index = y * this.canvas.width + x;
-		return this.pixels[index];
+		const index = y * this.longueur + x;
+		return this.pixels[index] ? true : false;
 	}
 
 	pixelOn(y, x) {
@@ -198,8 +206,8 @@ class DisplayGraphCasio {
 	}
 
 	pixelChange(y, x) {
-		if (this.pixelTest(y, x)) this.pixelOn(y, x);
-		else this.pixelOff(y, x);
+		if (this.pixelTest(y, x)) this.pixelOff(y, x);
+		else this.pixelOn(y, x);
 	}
 }
 
