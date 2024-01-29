@@ -1,6 +1,6 @@
 var getKeySpan;
 document.addEventListener('DOMContentLoaded', () => {
-	display = new DisplayGraphCasio();
+	display = new DisplayGraphCasioVertical();
 	getKeySpan = document.getElementById('getkey');
 	freecell.main();
 });

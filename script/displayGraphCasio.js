@@ -16,11 +16,19 @@ class DisplayGraphCasio {
 	}
 
 	clear() {
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+
+	fillRect(x, y, w, h) {
+		this.ctx.fillRect(x, y, w, h);
+	}
+
+	clearRect(x, y, w, h) {
+		this.ctx.clearRect(x, y, w, h);
 	}
 
 	fline(x1, y1, x2, y2) {
-		this.ctx.fillRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+		this.fillRect(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 	}
 
 	/**
@@ -66,7 +74,7 @@ class DisplayGraphCasio {
 				break;
 		}
 
-		this.ctx.clearRect(x, y, largeur, 6);
+		this.clearRect(x, y, largeur, 6);
 
 		switch (text) {
 			case ' ':
@@ -78,86 +86,86 @@ class DisplayGraphCasio {
 				}
 				break;
 			case '#':
-				this.ctx.fillRect(x, y + 1, 3, 3);
+				this.fillRect(x, y + 1, 3, 3);
 				break;
 			case '%':
-				this.ctx.fillRect(x, y + 1, 1, 1);
-				this.ctx.fillRect(x + 3, y + 4, 1, 1);
+				this.fillRect(x, y + 1, 1, 1);
+				this.fillRect(x + 3, y + 4, 1, 1);
 				for (let i = 0; i < 4; i++) {
-					this.ctx.fillRect(x + i, y + 4 - i, 1, 1);
+					this.fillRect(x + i, y + 4 - i, 1, 1);
 				}
 				break;
 			case '>':
-				this.ctx.fillRect(x, y, 1, 5);
+				this.fillRect(x, y, 1, 5);
 				for (let i = 0; i < 3; i++) {
-					this.ctx.fillRect(x + i + 1, y + i, 1, 5 - 2 * i);
+					this.fillRect(x + i + 1, y + i, 1, 5 - 2 * i);
 				}
 				break;
-				case '<':
-					this.ctx.fillRect(x + 3, y, 1, 5);
-					for (let i = 0; i < 3; i++) {
-						this.ctx.fillRect(x + 2 - i, y + i, 1, 5 - 2 * i);
-					}
-					break;
+			case '<':
+				this.fillRect(x + 3, y, 1, 5);
+				for (let i = 0; i < 3; i++) {
+					this.fillRect(x + 2 - i, y + i, 1, 5 - 2 * i);
+				}
+				break;
 			case '0':
-				this.ctx.fillRect(x, y, 3, 5);
-				this.ctx.clearRect(x + 1, y + 1, 1, 3);
+				this.fillRect(x, y, 3, 5);
+				this.clearRect(x + 1, y + 1, 1, 3);
 				break;
 			case '1':
-				this.ctx.fillRect(x + 1, y, 1, 5);
+				this.fillRect(x + 1, y, 1, 5);
 				break;
 			case '2':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x + 2, y + 1, 1, 1);
-				this.ctx.fillRect(x, y + 2, 3, 1);
-				this.ctx.fillRect(x, y + 3, 1, 1);
-				this.ctx.fillRect(x, y + 4, 3, 1);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x + 2, y + 1, 1, 1);
+				this.fillRect(x, y + 2, 3, 1);
+				this.fillRect(x, y + 3, 1, 1);
+				this.fillRect(x, y + 4, 3, 1);
 				break;
 			case '3':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x, y + 2, 3, 1);
-				this.ctx.fillRect(x, y + 4, 3, 1);
-				this.ctx.fillRect(x + 2, y, 1, 5);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x, y + 2, 3, 1);
+				this.fillRect(x, y + 4, 3, 1);
+				this.fillRect(x + 2, y, 1, 5);
 				break;
 			case '4':
-				this.ctx.fillRect(x, y, 1, 4);
-				this.ctx.fillRect(x + 2, y, 1, 5);
-				this.ctx.fillRect(x + 1, y + 3, 1, 1);
+				this.fillRect(x, y, 1, 4);
+				this.fillRect(x + 2, y, 1, 5);
+				this.fillRect(x + 1, y + 3, 1, 1);
 				break;
 			case '5':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x, y + 1, 1, 1);
-				this.ctx.fillRect(x, y + 2, 3, 1);
-				this.ctx.fillRect(x + 2, y + 3, 1, 1);
-				this.ctx.fillRect(x, y + 4, 3, 1);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x, y + 1, 1, 1);
+				this.fillRect(x, y + 2, 3, 1);
+				this.fillRect(x + 2, y + 3, 1, 1);
+				this.fillRect(x, y + 4, 3, 1);
 				break;
 			case '6':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x, y + 1, 1, 3);
-				this.ctx.fillRect(x, y + 2, 3, 1);
-				this.ctx.fillRect(x + 2, y + 3, 1, 1);
-				this.ctx.fillRect(x, y + 4, 3, 1);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x, y + 1, 1, 3);
+				this.fillRect(x, y + 2, 3, 1);
+				this.fillRect(x + 2, y + 3, 1, 1);
+				this.fillRect(x, y + 4, 3, 1);
 				break;
 			case '7':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x + 2, y + 1, 1, 4);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x + 2, y + 1, 1, 4);
 				break;
 			case '8':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x, y + 1, 1, 1);
-				this.ctx.fillRect(x + 2, y + 1, 1, 1);
-				this.ctx.fillRect(x, y + 2, 3, 1);
-				this.ctx.fillRect(x, y + 3, 1, 1);
-				this.ctx.fillRect(x + 2, y + 3, 1, 1);
-				this.ctx.fillRect(x, y + 4, 3, 1);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x, y + 1, 1, 1);
+				this.fillRect(x + 2, y + 1, 1, 1);
+				this.fillRect(x, y + 2, 3, 1);
+				this.fillRect(x, y + 3, 1, 1);
+				this.fillRect(x + 2, y + 3, 1, 1);
+				this.fillRect(x, y + 4, 3, 1);
 				break;
 			case '9':
-				this.ctx.fillRect(x, y, 3, 1);
-				this.ctx.fillRect(x, y + 1, 1, 1);
-				this.ctx.fillRect(x + 2, y + 1, 1, 1);
-				this.ctx.fillRect(x, y + 2, 3, 1);
-				this.ctx.fillRect(x + 2, y + 3, 1, 1);
-				this.ctx.fillRect(x, y + 4, 3, 1);
+				this.fillRect(x, y, 3, 1);
+				this.fillRect(x, y + 1, 1, 1);
+				this.fillRect(x + 2, y + 1, 1, 1);
+				this.fillRect(x, y + 2, 3, 1);
+				this.fillRect(x + 2, y + 3, 1, 1);
+				this.fillRect(x, y + 4, 3, 1);
 				break;
 			default:
 				console.warn('Texte inconnu :', text);
@@ -176,12 +184,12 @@ class DisplayGraphCasio {
 	}
 
 	pixelOn(y, x) {
-		this.ctx.fillRect(x, y, 1, 1);
+		this.fillRect(x, y, 1, 1);
 		this.#setPixel(x, y, true);
 	}
 
 	pixelOff(y, x) {
-		this.ctx.clearRect(x, y, 1, 1);
+		this.clearRect(x, y, 1, 1);
 		this.#setPixel(x, y, false);
 	}
 
@@ -192,5 +200,21 @@ class DisplayGraphCasio {
 	pixelChange(y, x) {
 		if (this.pixelTest(y, x)) this.pixelOn(y, x);
 		else this.pixelOff(y, x);
+	}
+}
+
+class DisplayGraphCasioVertical extends DisplayGraphCasio {
+	constructor() {
+		super();
+		this.canvas.width = 64;
+		this.canvas.height = 128;
+	}
+
+	fillRect(x, y, w, h) {
+		this.ctx.fillRect(this.canvas.width - y, x, -h, w);
+	}
+
+	clearRect(x, y, w, h) {
+		this.ctx.clearRect(this.canvas.width - y, x, -h, w);
 	}
 }
