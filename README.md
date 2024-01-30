@@ -4,6 +4,8 @@ Ce projet est un portage d'un programme réalisé sous CASIO Basic.
 Il n'a pas l'objectif d'être performant (JS est déjà 4 millions de fois plus rapide que Basic),
 ni d'être agréable à utiliser (il faut aimer le binaire).
 
+Version en ligne sur [jiogo18.github.io/FreeCell](https://jiogo18.github.io/FreeCell/)
+
 ## Présentation de l'interface
 
 Chaque case correspond à une carte. Les cartes sont affichées au format binaire :
