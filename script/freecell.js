@@ -688,11 +688,8 @@ const freecell = {
 				vars.H = this.valeurDepot(vars.C);
 				if (vars.G === vars.H + 1) {
 					// Goto R
-					vars.H++;
-					mat.A[0][0]++;
-					mat.A[0][mat.A[0][0]] = A;
-					mat.A[1][mat.A[0][0]] = vars.C + 12;
-					this.effacerCarte(A, vars.E);
+					vars.A = A;
+					this.goTAS();
 					deplacementAuto = true;
 				}
 			}
