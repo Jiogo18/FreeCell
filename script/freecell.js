@@ -28,6 +28,11 @@ const mat = {};
 var getKey = 0;
 /** @type {DisplayGraphCasio} */
 var display;
+
+const configs = {
+	couleurs: true,
+};
+
 // Freecell
 // Par Jérôme L
 // V 1.1
@@ -139,10 +144,14 @@ const freecell = {
 			display.fline(9, y, 15, y);
 		}
 		// Couleur des cartes dans le dépôt (en haut à droite)
-		display.pixelOn(14, 11);
-		display.pixelOn(20, 12);
-		display.pixelOn(26, 11);
-		display.pixelOn(26, 12);
+		if (configs.couleurs) {
+			display.setColor('red');
+		}
+		display.pixelOn(14, 11); // 2
+		display.pixelOn(26, 11); // 4
+		display.pixelOn(26, 12); // 4
+		display.setColor('black');
+		display.pixelOn(20, 12); // 3
 		resetVars();
 
 		console.log('- Affichage init');
@@ -159,6 +168,10 @@ const freecell = {
 		console.log('+ TAS');
 		for (let couleur = 1; couleur <= 4; couleur++) {
 			let valeur = this.valeurDepot(couleur);
+			// Rouge ou noir selon la couleur
+			if (configs.couleurs && (couleur === 2 || couleur === 4)) {
+				display.setColor('red');
+			}
 			this.dessinerValeurCarteXY(couleur * 6, 12, valeur);
 		}
 		if (this.depotPlein()) {
@@ -475,11 +488,19 @@ const freecell = {
 	dessinerCarteXY(x, y, valeur, couleur) {
 		// coin de présence
 		display.pixelOn(x - 1, y - 2);
+
+		// Rouge ou noir selon la couleur
+		if (configs.couleurs && (couleur === 2 || couleur === 4)) {
+			display.setColor('red');
+		}
 		// Affichage binaire de la couleur
 		if (couleur >= 3) display.pixelOn(x + 2, y);
 		if (couleur === 2 || couleur === 4) display.pixelOn(x + 2, y - 1);
 		// Affichage binaire de la valeur
 		this.dessinerValeurCarteXY(x, y, valeur);
+
+		// Réinitialise la couleur
+		display.setColor('black');
 	},
 
 	/**
@@ -513,6 +534,9 @@ const freecell = {
 		} else {
 			display.pixelOff(x + 1, y - 1);
 		}
+
+		// Reset the color
+		display.setColor('black');
 	},
 
 	/**

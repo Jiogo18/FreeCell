@@ -209,6 +209,10 @@ class DisplayGraphCasio {
 		if (this.pixelTest(y, x)) this.pixelOff(y, x);
 		else this.pixelOn(y, x);
 	}
+
+	setColor(color) {
+		this.ctx.fillStyle = color;
+	}
 }
 
 class DisplayGraphCasioVertical extends DisplayGraphCasio {
