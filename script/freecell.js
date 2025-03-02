@@ -100,24 +100,27 @@ const freecell = {
 		for (let x = 20; x <= 100; x += 5) display.fline(x, 7, x, 55);
 
 		display.text(55, 123, '%');
-		for (vars.A = 21; vars.A <= 51; vars.A += 5) {
-			for (vars.B = 8; vars.B <= 50; vars.B += 6) {
+		for (let y = 0; y < 7; ++y) {
+			for (let indexColonne = 0; indexColonne < 8; ++indexColonne) {
+				if (y === 6 && indexColonne === 4) {
+					break;
+				}
+				const A = y * 5 + 21;
+				const B = indexColonne * 6 + 8;
 
 				// Affichage de la progression
 				display.text(55, 115, 100 - int(str[9].length / 1.04));
 				await sleep(20); // Temps de chargement simulé
 
-				if (str[9].length != 2) {
+				const indexAleatoire = str[9].length != 2
 					// Choisis une carte aléatoirement
-					vars.C = randint(1, str[9].length / 2) * 2 - 1;
-				} else {
+					? randint(1, str[9].length / 2) * 2 - 1
 					// S'il ne reste qu'une carte
-					vars.C = 1;
-				}
+					: 1
 
 				// Extraire la carte de str[9] vers str[10]
-				str[10] = str[9].slice(vars.C - 1, vars.C + 1);
-				str[9] = str[9].slice(0, vars.C - 1) + str[9].slice(vars.C + 1);
+				str[10] = str[9].slice(indexAleatoire - 1, indexAleatoire + 1);
+				str[9] = str[9].slice(0, indexAleatoire - 1) + str[9].slice(indexAleatoire + 1);
 
 				// (Version d'origine : une boucle compliquée pour convertir en nombre)
 				vars.D = parseInt(str[10]);
@@ -126,7 +129,7 @@ const freecell = {
 				console.log(str[10], vars.D, valeur, couleur)
 
 				// Affichage de la carte
-				this.dessinerCarteXY(vars.B + 1, vars.A + 2, valeur, couleur);
+				this.dessinerCarteXY(B + 1, A + 2, valeur, couleur);
 			}
 		}
 		str[9] = '';
@@ -249,8 +252,8 @@ const freecell = {
 					break;
 				case 'ArrowUp': // 28, Flèche haut
 				case 'ArrowRight':
-				vars.A--;
-				break;
+					vars.A--;
+					break;
 				case 'ArrowDown': // 37, Flèche bas
 				case 'ArrowLeft':
 					vars.A++;
