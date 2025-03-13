@@ -51,3 +51,5 @@ Lorsque le joueur effectue des déplacements vers le plateau, plusieurs règles 
 Jeu de carte FreeCell porté depuis un programme réalisé en CASIO Basic.
 
 Réalisé par Jérôme L. en 2019, porté en JavaScript en 2024.
+
+[Pixel Playing Cards by yaomon](https://yaomon.itch.io/playing-cards)
