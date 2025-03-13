@@ -1,7 +1,9 @@
 var getKeySpan;
 document.addEventListener('DOMContentLoaded', () => {
-	display = new DisplayGraphCasioVertical();
-	freecell.main();
+	setTimeout(() => {
+		display = new DisplayGraphCasioVertical();
+		freecell.main();
+	}, 100);
 });
 document.addEventListener('keydown', (e) => {
 	switch (e.key) {

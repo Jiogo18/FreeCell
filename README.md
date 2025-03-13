@@ -53,3 +53,5 @@ Jeu de carte FreeCell porté depuis un programme réalisé en CASIO Basic.
 Réalisé par Jérôme L. en 2019, porté en JavaScript en 2024.
 
 [Pixel Playing Cards by yaomon](https://yaomon.itch.io/playing-cards)
+
+Modified version (no oak server) of [denoland/react-vite-ts-template](https://github.com/denoland/react-vite-ts-template)
