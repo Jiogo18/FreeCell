@@ -214,3 +214,17 @@ export class CasioContext {
 		this.context.fillStyle = color;
 	}
 }
+
+export class VerticalCasioContext extends CasioContext {
+	constructor(context: CanvasRenderingContext2D) {
+		super(context);
+	}
+
+	fillRect(x: number, y: number, w: number, h: number) {
+		super.fillRect(this.width() - y - h, x, h, w);
+	}
+
+	clearRect(x: number, y: number, w: number, h: number) {
+		super.clearRect(this.width() - y - h, x, h, w);
+	}
+}

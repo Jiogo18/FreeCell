@@ -1,5 +1,6 @@
 canvas.casio_display {
 	width: 256px;
+	height: 512px;
 	margin: 0 auto;
 	border: 1px solid #000;
 	image-rendering: pixelated;
