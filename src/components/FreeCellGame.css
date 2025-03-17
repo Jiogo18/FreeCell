@@ -1,0 +1,6 @@
+.freecell_game {
+	display: flex;
+	gap: 1em;
+	margin: 0 auto;
+	justify-content: space-around;
+}

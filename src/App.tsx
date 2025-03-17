@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
+import FreeCellGame from './components/FreeCellGame';
 
 function App() {
 	return (
 		<>
 			<h1>Freecell</h1>
-			<canvas id='display'></canvas>
+			<FreeCellGame />
 
 			<div>
 				<h2>Présentation de l'interface</h2>
