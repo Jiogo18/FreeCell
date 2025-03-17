@@ -34,6 +34,11 @@ export interface GameMove {
 	to: SlotIdentifier;
 }
 
+export interface SelectionState {
+	from: SlotIdentifier;
+	to: SlotIdentifier | undefined;
+}
+
 /**
  * Freecell game state
  */
@@ -58,4 +63,8 @@ export interface GameState {
 	 * History of the moves made in the game
 	 */
 	moves: GameMove[];
+	/**
+	 * Selection state by the user
+	 */
+	selection: SelectionState;
 }

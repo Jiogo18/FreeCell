@@ -23,9 +23,10 @@
 
 .card_slot {
 	width: 64px;
-	height: 96px;
+	height: 80px;
 	display: flex;
 	border: 1px dotted gray;
+	border-radius: 2px;
 	margin: 4px;
 }
 
@@ -34,6 +35,7 @@
 		border-color: black;
 	}
 }
+
 .card_slot > span {
 	margin: auto;
 	text-align: center;
@@ -59,4 +61,8 @@
 
 .card {
 	margin-bottom: -60px;
+	width: 100%;
+}
+.card_slot > .card {
+	margin: 0;
 }

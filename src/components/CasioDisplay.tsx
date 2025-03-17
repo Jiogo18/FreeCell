@@ -4,7 +4,7 @@ import {
 	GameState,
 	SlotIdentifier,
 } from '../gameLogic/types';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CasioContext, VerticalCasioContext } from './CasioContext';
 import './CasioDisplay.css';
 import { useGameLogic } from '../gameLogic/useGameLogic';
@@ -157,27 +157,102 @@ function drawGameState(context: CasioContext, gameState: GameState) {
 			index,
 		});
 	}
+
+	// Draw the selectors
+	if (gameState.selection.from.category === 'board') {
+		context.text(gameState.selection.from.index * 6 + 8, 105, '>');
+	} else if (gameState.selection.from.category === 'depot') {
+		context.text(gameState.selection.from.index * 6 + 5, 4, '<');
+	} else if (gameState.selection.from.category === 'storage') {
+		context.text(gameState.selection.from.index * 6 + 35, 4, '<');
+	}
+	if (gameState.selection.to !== undefined) {
+		if (gameState.selection.to.category === 'board') {
+			context.text(gameState.selection.to.index * 6 + 8, 110, '<');
+		} else if (gameState.selection.to.category === 'depot') {
+			context.text(gameState.selection.to.index * 6 + 5, 1, '>');
+		} else if (gameState.selection.to.category === 'storage') {
+			context.text(gameState.selection.to.index * 6 + 35, 1, '>');
+		}
+	}
 }
 
 function CasioDisplay({ orientation }: CasioDisplayProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 
-	let displayContext: CasioContext | undefined;
+	const [displayContext, setDisplayContext] = useState<
+		CasioContext | undefined
+	>(undefined);
 	useEffect(() => {
 		if (!canvasRef.current) return;
 		const context = canvasRef.current.getContext('2d');
 		if (!context) return;
-		displayContext = orientation === 'horizontal'
-			? new CasioContext(context)
-			: new VerticalCasioContext(context);
+		if (orientation === 'horizontal') {
+			setDisplayContext(new CasioContext(context));
+		} else setDisplayContext(new VerticalCasioContext(context));
 	}, [canvasRef, orientation]);
 
-	const { gameState } = useGameLogic();
+	const {
+		gameState,
+		handleMove,
+		setSelectors,
+		moveSelectorRelative,
+		moveSelectorAbsolute,
+	} = useGameLogic();
 
 	useEffect(() => {
 		if (!displayContext) return;
 		drawGameState(displayContext, gameState);
 	}, [displayContext, gameState]);
+
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			switch (e.key) {
+				case 'ArrowUp':
+				case 'ArrowRight':
+					moveSelectorRelative('right');
+					e.preventDefault();
+					break;
+				case 'ArrowDown':
+				case 'ArrowLeft':
+					moveSelectorRelative('left');
+					e.preventDefault();
+					break;
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					moveSelectorAbsolute(parseInt(e.key));
+					break;
+				case 'Enter':
+				case ' ':
+					if (gameState.selection.to === undefined) {
+						setSelectors(
+							gameState.selection.from,
+							{ category: 'board', index: 0 } as SlotIdentifier,
+						);
+					} else {
+						handleMove({
+							from: gameState.selection.from,
+							to: gameState.selection.to,
+						});
+					}
+					e.preventDefault();
+					break;
+			}
+		}
+
+		document.body.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.body.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [gameState]);
 
 	return (
 		<canvas

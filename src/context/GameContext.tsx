@@ -32,6 +32,7 @@ export function GameProvider({ children }: GameProviderProps) {
 		storage: [],
 		depot: new Map(),
 		moves: [],
+		selection: { from: { category: 'board', index: 0 }, to: undefined },
 	});
 
 	return (

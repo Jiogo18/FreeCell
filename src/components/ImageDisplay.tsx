@@ -60,7 +60,7 @@ function ImageDisplay({}: ImageDisplayProps) {
 				<div className='card_storage'>
 					{[3, 2, 1, 0].map((index) => (
 						<div key={index} className='card_slot'>
-							{index < gameState.storage.length &&
+							{gameState.storage[index] !== undefined &&
 								(
 									<CardImage
 										key={index}
@@ -70,7 +70,7 @@ function ImageDisplay({}: ImageDisplayProps) {
 						</div>
 					))}
 				</div>
-				<span>#</span>
+				<span>&#x25A0;</span>
 				<div className='card_depot'>
 					{cardColors.map((color, index) => (
 						<CardDepot
