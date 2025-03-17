@@ -1,10 +1,8 @@
 var getKeySpan;
-document.addEventListener('DOMContentLoaded', () => {
-	setTimeout(() => {
-		display = new DisplayGraphCasioVertical();
-		freecell.main();
-	}, 100);
-});
+setTimeout(() => {
+	display = new DisplayGraphCasioVertical();
+	freecell.main();
+}, 100);
 document.addEventListener('keydown', (e) => {
 	switch (e.key) {
 		case 'ArrowUp':

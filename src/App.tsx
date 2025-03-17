@@ -1,12 +1,31 @@
 import React from 'react';
 import './App.css';
 import FreeCellGame from './components/FreeCellGame';
+import CASIOSimulation from './CASIOSimulation/main';
 
 function App() {
 	return (
 		<>
 			<h1>Freecell</h1>
-			<FreeCellGame />
+			{document.location.pathname.endsWith('CASIOSimulation')
+				? (
+					<>
+						<p>
+							Ported from{' '}
+							<a href='https://github.com/Jiogo18/FreeCell/blob/main/CASIO/FREECELL.G1M.txt'>
+								FREECELL.G1M
+							</a>
+						</p>
+						<CASIOSimulation />
+						<a href='../'>Try the React version</a>
+					</>
+				)
+				: (
+					<>
+						<FreeCellGame />
+						<a href='CASIOSimulation'>Try the CASIO simulation</a>
+					</>
+				)}
 
 			<div>
 				<h2>Présentation de l'interface</h2>
