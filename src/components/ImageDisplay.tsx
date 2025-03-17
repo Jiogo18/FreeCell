@@ -1,7 +1,15 @@
-import React from 'react';
-import { Card, CardColor, cardColors, CardValue } from '../gameLogic/types';
+import React, { ReactNode } from 'react';
+import {
+	Card,
+	CardColor,
+	cardColors,
+	cardColorsSelector,
+	CardValue,
+	SlotIdentifier,
+} from '../gameLogic/types';
 import './ImageDisplay.css';
 import { useGameLogic } from '../gameLogic/useGameLogic';
+import { boardColumnCount } from '../gameLogic/FreeCellGameLogic';
 
 interface ImageDisplayProps {
 }
@@ -20,13 +28,54 @@ function getCardName(card: Card) {
 	return `${card.value} ${card.color}`;
 }
 
-function CardImage({ card }: { card: Card }) {
+function CardImage(
+	props: { card: Card } & React.DOMAttributes<HTMLImageElement>,
+) {
+	const { card, ...otherProps } = props;
 	return (
 		<img
+			{...otherProps}
 			src={getCardImage(card)}
 			alt={getCardName(card)}
+			title={getCardName(card)}
 			className={'card'}
 		/>
+	);
+}
+
+function DragDropCardLogic(
+	{ slot, children }: { slot: SlotIdentifier; children: ReactNode },
+) {
+	const {
+		gameState,
+		handleMove,
+		handleMoveToDepot,
+		setSelectors,
+		setCurrentSlot,
+	} = useGameLogic();
+
+	return (
+		<div
+			onDoubleClick={() => handleMoveToDepot(slot)}
+			onMouseOver={() => setCurrentSlot(slot)}
+			onDragStart={() =>
+				setSelectors(slot, { category: 'board', index: 0 })}
+			onDragOver={() => {
+				if (gameState.selection.to !== undefined) {
+					setCurrentSlot(slot);
+				}
+			}}
+			onDragEnd={() => {
+				if (gameState.selection.to !== undefined) {
+					handleMove({
+						from: gameState.selection.from,
+						to: gameState.selection.to,
+					});
+				}
+			}}
+		>
+			{children}
+		</div>
 	);
 }
 
@@ -34,20 +83,53 @@ function CardDepot(
 	{ color, value }: { color: CardColor; value: CardValue | undefined },
 ) {
 	return (
-		<div className='card_slot'>
-			{value !== undefined
-				? <CardImage card={{ color, value: value! }} />
-				: (
-					<span>
-						{[
-							'\u2660',
-							'\u2665',
-							'\u2666',
-							'\u2663',
-						][cardColors.indexOf(color)]}
-					</span>
-				)}
-		</div>
+		<DragDropCardLogic
+			slot={{
+				category: 'depot',
+				index: cardColorsSelector.indexOf(color),
+			}}
+		>
+			<div className='card_slot'>
+				{value !== undefined
+					? <CardImage card={{ color, value: value! }} />
+					: (
+						<span>
+							{[
+								'\u2660',
+								'\u2665',
+								'\u2666',
+								'\u2663',
+							][cardColors.indexOf(color)]}
+						</span>
+					)}
+			</div>
+		</DragDropCardLogic>
+	);
+}
+
+function CardSlot(
+	{ card, depotIndex }: { card: Card | undefined; depotIndex: number },
+) {
+	return (
+		<DragDropCardLogic slot={{ category: 'storage', index: depotIndex }}>
+			<div className='card_slot'>
+				{card !== undefined && <CardImage card={card} />}
+			</div>
+		</DragDropCardLogic>
+	);
+}
+
+function CardColumn(
+	{ cards, columnIndex }: { cards: Card[]; columnIndex: number },
+) {
+	return (
+		<DragDropCardLogic slot={{ category: 'board', index: columnIndex }}>
+			<div className='card_column'>
+				{cards.map((card, index) => (
+					<CardImage key={index} card={card} />
+				))}
+			</div>
+		</DragDropCardLogic>
 	);
 }
 
@@ -59,15 +141,11 @@ function ImageDisplay({}: ImageDisplayProps) {
 			<div className='freecell_header'>
 				<div className='card_storage'>
 					{[3, 2, 1, 0].map((index) => (
-						<div key={index} className='card_slot'>
-							{gameState.storage[index] !== undefined &&
-								(
-									<CardImage
-										key={index}
-										card={gameState.storage[index]!}
-									/>
-								)}
-						</div>
+						<CardSlot
+							key={index}
+							card={gameState.storage[index]}
+							depotIndex={index}
+						/>
 					))}
 				</div>
 				<span>&#x25A0;</span>
@@ -83,14 +161,11 @@ function ImageDisplay({}: ImageDisplayProps) {
 			</div>
 			<div className='card_board'>
 				{[...gameState.board].reverse().map((column, columnIndex) => (
-					<div key={columnIndex} className='card_column'>
-						{column.map((card) => (
-							<CardImage
-								key={`${card.color}-${card.value}`}
-								card={card}
-							/>
-						))}
-					</div>
+					<CardColumn
+						key={columnIndex}
+						cards={column}
+						columnIndex={boardColumnCount - columnIndex - 1}
+					/>
 				))}
 			</div>
 		</div>

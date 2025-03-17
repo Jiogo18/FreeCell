@@ -1,9 +1,11 @@
 import { useContext } from 'react';
 import { GameContext } from '../context/GameContext';
-import { GameMove, SlotIdentifier } from './types';
+import { cardColorsSelector, GameMove, SlotIdentifier } from './types';
 import {
 	addCardToSlot,
+	canMoveToDepot,
 	findMovesToDepot,
+	getCardAtSlot,
 	isMoveAllowed,
 	removeCardFromSlot,
 } from './FreeCellGameLogic';
@@ -66,23 +68,27 @@ export function useGameLogic() {
 		} else throw new Error('Invalid slot');
 	}
 
-	function moveSelectorRelative(direction: 'left' | 'right') {
+	function getCurrentSlot(): SlotIdentifier {
 		if (gameState.selection.to !== undefined) {
-			if (direction === 'left') {
-				setSelectors(
-					gameState.selection.from,
-					getNextSlot(gameState.selection.to),
-				);
-			} else {
-				setSelectors(
-					gameState.selection.from,
-					getPreviousSlot(gameState.selection.to),
-				);
-			}
-		} else if (direction === 'left') {
-			setSelectors(getNextSlot(gameState.selection.from), undefined);
+			return gameState.selection.to;
 		} else {
-			setSelectors(getPreviousSlot(gameState.selection.from), undefined);
+			return gameState.selection.from;
+		}
+	}
+
+	function setCurrentSlot(slot: SlotIdentifier) {
+		if (gameState.selection.to !== undefined) {
+			setSelectors(gameState.selection.from, slot);
+		} else {
+			setSelectors(slot, undefined);
+		}
+	}
+
+	function moveSelectorRelative(direction: 'left' | 'right') {
+		if (direction === 'left') {
+			setCurrentSlot(getNextSlot(getCurrentSlot()));
+		} else {
+			setCurrentSlot(getPreviousSlot(getCurrentSlot()));
 		}
 	}
 
@@ -92,11 +98,7 @@ export function useGameLogic() {
 			index < 8 && { category: 'board', index } ||
 			index < 12 && { category: 'storage', index: index - 8 } ||
 			{ category: 'depot', index: index - 12 };
-		if (gameState.selection.to !== undefined) {
-			setSelectors(gameState.selection.from, slot);
-		} else {
-			setSelectors(slot, undefined);
-		}
+		setCurrentSlot(slot);
 	}
 
 	function handleAuto() {
@@ -106,12 +108,29 @@ export function useGameLogic() {
 		}
 	}
 
+	function handleMoveToDepot(slot: SlotIdentifier) {
+		const card = getCardAtSlot(gameState, slot);
+		if (card === undefined) return;
+		if (canMoveToDepot(gameState, card)) {
+			handleMove({
+				from: slot,
+				to: {
+					category: 'depot',
+					index: cardColorsSelector.indexOf(card.color),
+				},
+			});
+		}
+	}
+
 	return {
 		gameState,
 		handleMove,
 		cancelMove,
 		handleAuto,
+		handleMoveToDepot,
 		setSelectors,
+		setCurrentSlot,
+		getCurrentSlot,
 		moveSelectorRelative,
 		moveSelectorAbsolute,
 	};

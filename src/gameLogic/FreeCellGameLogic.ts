@@ -125,7 +125,7 @@ export function addCardToSlot(
 	}
 }
 
-function canMoveToDepot(gameState: GameState, card: Card): boolean {
+export function canMoveToDepot(gameState: GameState, card: Card): boolean {
 	const color = card.color;
 	const depotValue = gameState.depot.get(color) ?? 0;
 	return depotValue + 1 === card.value;
