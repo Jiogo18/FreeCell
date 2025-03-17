@@ -95,7 +95,8 @@ export function useGameLogic() {
 	}
 
 	function moveSelectorAbsolute(index: number) {
-		if (index < 0 || index > 16) throw new Error('Invalid slot');
+		if (index > 16) index %= 16;
+		if (index < 0) index += 16;
 		const slot: SlotIdentifier =
 			index < 8 && { category: 'board', index } ||
 			index < 12 && { category: 'storage', index: index - 8 } ||

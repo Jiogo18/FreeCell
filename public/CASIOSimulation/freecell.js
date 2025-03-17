@@ -254,9 +254,11 @@ const freecell = {
 
 			switch (getKey) {
 				case 'a': // 77 Résolution automatique
+				case 'A':
 					await this.auto(); // Goto theta
 					break;
-				case '0': // 71 Pause
+				case 'p': // 0 71 Pause
+				case 'P':
 					// Goto P
 					await this.pause();
 					break;
@@ -282,7 +284,8 @@ const freecell = {
 				case '9': // 54
 					vars.A = parseInt(getKey);
 					break;
-				case 's': // 78, Shift
+				case 'd': // 78, Shift
+				case 'D':
 					this.goTAS(vars.A); // Goto R
 					break;
 				case 'Enter': // 31, Exe

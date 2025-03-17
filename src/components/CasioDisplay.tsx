@@ -181,7 +181,9 @@ function CasioDisplay({ orientation }: CasioDisplayProps) {
 	const {
 		gameState,
 		handleMove,
+		cancelMove,
 		handleAuto,
+		handleMoveToDepot,
 		setSelectors,
 		moveSelectorRelative,
 		moveSelectorAbsolute,
@@ -215,7 +217,7 @@ function CasioDisplay({ orientation }: CasioDisplayProps) {
 				case '7':
 				case '8':
 				case '9':
-					moveSelectorAbsolute(parseInt(e.key));
+					moveSelectorAbsolute(parseInt(e.key) - 1);
 					break;
 				case 'Enter':
 				case ' ':
@@ -232,8 +234,20 @@ function CasioDisplay({ orientation }: CasioDisplayProps) {
 					}
 					e.preventDefault();
 					break;
+				case 'Escape':
+					cancelMove();
+					break;
 				case 'a':
+				case 'A':
 					handleAuto();
+				case 'd':
+				case 'D':
+					handleMoveToDepot(gameState.selection.from);
+					break;
+				case 's':
+				case 'S':
+					handleMoveToDepot(gameState.selection.from, true);
+					break;
 			}
 		}
 

@@ -83,21 +83,29 @@ function App() {
 						possibles vers la zone de dépôt automatiquement.
 					</li>
 					<li>
-						La touche [S] permet de déplacer la carte actuelle vers
+						La touche [D] permet de déplacer la carte actuelle vers
 						la zone de dépôt.
 					</li>
 					<li>
-						La touche [0] permet de mettre en pause (legacy, ne
+						La touche [S] permet de déplacer la carte actuelle vers
+						la zone de dépôt, vers une colonne ou vers la zone de
+						stockage.
+					</li>
+					<li>
+						La touche [P] permet de mettre en pause (legacy, ne
 						fonctionne pas).
 					</li>
 					<li>
-						Les touches [1] à [8] permettent de déplacer la carte
-						actuelle vers la colonne correspondante.
+						Les touches [1] à [8] permettent de déplacer le curseur
+						vers la colonne correspondante.
 					</li>
 					<li>
-						La touche [9] permet de déplacer la carte actuelle vers
-						une case de la zone temporaire (aussi accessible par les
-						flèches).
+						La touche [9] permet de déplacer le curseur une case de
+						la zone temporaire (aussi accessible par les flèches).
+					</li>
+					<li>
+						La touche [0] permet de déplacer le curseur vers la zone
+						de dépôt.
 					</li>
 				</ul>
 			</div>
