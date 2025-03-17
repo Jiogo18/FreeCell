@@ -42,26 +42,26 @@ export function useGameLogic() {
 		const index = slot.index + 1;
 		if (slot.category === 'board') {
 			if (index < 8) return { category: 'board', index };
-			else return { category: 'depot', index: 0 };
+			else return { category: 'storage', index: 0 };
 		} else if (slot.category === 'storage') {
 			if (index < 4) return { category: 'storage', index };
-			else return { category: 'board', index: 0 };
+			else return { category: 'depot', index: 0 };
 		} else if (slot.category === 'depot') {
 			if (index < 4) return { category: 'depot', index };
-			else return { category: 'storage', index: 0 };
+			else return { category: 'board', index: 0 };
 		} else throw new Error('Invalid slot');
 	}
 	function getPreviousSlot(slot: SlotIdentifier): SlotIdentifier {
 		const index = slot.index - 1;
 		if (slot.category === 'board') {
 			if (index >= 0) return { category: 'board', index };
-			else return { category: 'storage', index: 3 };
+			else return { category: 'depot', index: 3 };
 		} else if (slot.category === 'storage') {
 			if (index >= 0) return { category: 'storage', index };
-			else return { category: 'depot', index: 3 };
+			else return { category: 'board', index: 7 };
 		} else if (slot.category === 'depot') {
 			if (index >= 0) return { category: 'depot', index };
-			else return { category: 'board', index: 7 };
+			else return { category: 'storage', index: 3 };
 		} else throw new Error('Invalid slot');
 	}
 
@@ -89,8 +89,8 @@ export function useGameLogic() {
 		if (index < 0 || index > 16) throw new Error('Invalid slot');
 		const slot: SlotIdentifier =
 			index < 8 && { category: 'board', index } ||
-			index < 12 && { category: 'depot', index: index - 8 } ||
-			{ category: 'storage', index: index - 12 };
+			index < 12 && { category: 'storage', index: index - 8 } ||
+			{ category: 'depot', index: index - 12 };
 		if (gameState.selection.to !== undefined) {
 			setSelectors(gameState.selection.from, slot);
 		} else {

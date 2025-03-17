@@ -47,7 +47,7 @@ export function getCardAtSlot(
 		}
 		return gameState.storage[column];
 	} else if (slot.category === 'depot') {
-		const column = slot.index;
+		const column = 3 - slot.index;
 		if (column < 0 || column >= depotSlotCount) {
 			throw new Error('Invalid slot');
 		}
@@ -59,7 +59,9 @@ export function getCardAtSlot(
 }
 
 export function redOrBlack(card: Card) {
-	return (card.color === 'heart' || card.color === 'spade') ? 'red' : 'black';
+	return (card.color === 'heart' || card.color === 'diamond')
+		? 'red'
+		: 'black';
 }
 
 export function isMoveAllowed(gameState: GameState, move: GameMove): boolean {
@@ -69,7 +71,7 @@ export function isMoveAllowed(gameState: GameState, move: GameMove): boolean {
 	const cardTo = getCardAtSlot(gameState, move.to);
 
 	if (move.to.category === 'depot') {
-		const color = cardColors[move.to.index];
+		const color = cardColors[3 - move.to.index];
 		if (color !== cardFrom.color) return false;
 		const value = gameState.depot.get(color) ?? 0;
 		return value + 1 === cardFrom.value;
@@ -93,7 +95,7 @@ export function removeCardFromSlot(
 		gameState.storage[slot.index] = undefined;
 		return card!;
 	} else if (slot.category === 'depot') {
-		const color = cardColors[slot.index];
+		const color = cardColors[3 - slot.index];
 		const value = gameState.depot.get(color);
 		if (value === undefined) throw new Error('Depot is empty');
 		if (value === 1) {

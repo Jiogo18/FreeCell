@@ -1,4 +1,4 @@
-export type CardColor = 'heart' | 'diamond' | 'clover' | 'spade';
+export type CardColor = 'spade' | 'heart' | 'diamond' | 'clover';
 export type CardValue = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
 export const cardValues: CardValue[] = [
@@ -16,7 +16,7 @@ export const cardValues: CardValue[] = [
 	12,
 	13,
 ];
-export const cardColors: CardColor[] = ['heart', 'diamond', 'clover', 'spade'];
+export const cardColors: CardColor[] = ['spade', 'heart', 'diamond', 'clover'];
 
 export interface Card {
 	color: CardColor;

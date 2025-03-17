@@ -20,15 +20,17 @@ function drawBackground(display: CasioContext) {
 	for (let y = 7; y <= 55; y += 6) display.fline(20, y, 100, y);
 	for (let x = 20; x <= 100; x += 5) display.fline(x, 7, x, 55);
 
-	display.text(29, 11, '#'); // Le roi de FreeCell
+	display.text(29, 11, '#'); // King of FreeCell
 	for (let y = 4; y <= 58; y += 6) {
 		display.fline(9, y, 15, y);
 	}
-	// Couleur des cartes dans le dépôt (en haut à droite)
-	display.pixelOn(14, 11);
-	display.pixelOn(20, 12);
-	display.pixelOn(26, 11);
-	display.pixelOn(26, 12);
+	// Colors of the depot (top right)
+	display.setColor('red');
+	display.pixelOn(20, 11);
+	display.pixelOn(14, 12);
+	display.setColor('black');
+	display.pixelOn(8, 11);
+	display.pixelOn(8, 12);
 }
 
 function drawCardValueAtPosition(
@@ -100,27 +102,11 @@ function drawCardInSlot(
 	} else if (slot.category === 'storage') {
 		drawCardAtPosition(context, card, slot.index * 6 + 36, 12);
 	} else if (slot.category === 'depot') {
-		drawCardValueAtPosition(context, slot.index * 6 + 38, 12, card.value);
-	}
-}
-
-function eraseLastInSlot(
-	gameState: GameState,
-	context: CasioContext,
-	slot: SlotIdentifier,
-) {
-	if (slot.category === 'board') {
-		const columnSize = gameState.board[slot.index]?.length;
-		if (columnSize === undefined) throw new Error('Invalid slot');
-		context.text(slot.index * 6 + 2, columnSize * 5 + 16, ' ');
-		for (let z = 1; z <= 5; z++) {
-			context.pixelOn(slot.index * 6 + 7, columnSize * 5 + 15 + z);
+		if (card.color === 'heart' || card.color === 'diamond') {
+			context.setColor('red');
 		}
-	} else if (slot.category === 'depot') {
-		context.text(slot.index * 6 + 29, 10, ' ');
-		for (let z = 1; z <= 5; z++) {
-			context.pixelOn(slot.index * 6 + 34, 9 + z);
-		}
+		drawCardValueAtPosition(context, slot.index * 6 + 6, 12, card.value);
+		context.setColor('black');
 	}
 }
 
@@ -151,7 +137,7 @@ function drawGameState(context: CasioContext, gameState: GameState) {
 
 	// Draw the depot
 	for (const [color, value] of gameState.depot) {
-		const index = cardColors.indexOf(color);
+		const index = 3 - cardColors.indexOf(color);
 		drawCardInSlot(gameState, context, { color, value }, {
 			category: 'depot',
 			index,
