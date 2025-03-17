@@ -27,5 +27,22 @@
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "react"
+  },
+  "fmt": {
+    "useTabs": true,
+    "lineWidth": 80,
+    "indentWidth": 4,
+    "semiColons": true,
+    "singleQuote": true,
+    "proseWrap": "preserve",
+    "include": [
+      "src/"
+    ],
+    "exclude": [
+      "README.md",
+      "dist/",
+      "script/",
+      "CASIO/"
+    ]
   }
 }

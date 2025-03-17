@@ -1,14 +1,14 @@
 #root {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  font-family: sans-serif;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	font-family: sans-serif;
 }
 
 canvas#display {
-  width: 256px;
-  margin: 0 auto;
-  border: 1px solid #000;
-  image-rendering: pixelated;
-  background: white;
+	width: 256px;
+	margin: 0 auto;
+	border: 1px solid #000;
+	image-rendering: pixelated;
+	background: white;
 }
