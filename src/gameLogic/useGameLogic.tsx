@@ -3,11 +3,13 @@ import { GameContext } from '../context/GameContext';
 import { cardColorsSelector, GameMove, SlotIdentifier } from './types';
 import {
 	addCardToSlot,
+	boardColumnCount,
 	canMoveToDepot,
 	findMovesToDepot,
 	getCardAtSlot,
 	isMoveAllowed,
 	removeCardFromSlot,
+	storageSlotCount,
 } from './FreeCellGameLogic';
 
 export function useGameLogic() {
@@ -108,9 +110,12 @@ export function useGameLogic() {
 		}
 	}
 
-	function handleMoveToDepot(slot: SlotIdentifier) {
+	function handleMoveToDepot(
+		slot: SlotIdentifier,
+		orBoardOrStorage: boolean = false,
+	): boolean {
 		const card = getCardAtSlot(gameState, slot);
-		if (card === undefined) return;
+		if (card === undefined) return false;
 		if (canMoveToDepot(gameState, card)) {
 			handleMove({
 				from: slot,
@@ -119,7 +124,29 @@ export function useGameLogic() {
 					index: cardColorsSelector.indexOf(card.color),
 				},
 			});
+			return true;
 		}
+
+		if (orBoardOrStorage) {
+			// Try to move to the board
+			for (let column = 0; column < boardColumnCount; column++) {
+				const to: SlotIdentifier = { category: 'board', index: column };
+				if (isMoveAllowed(gameState, { from: slot, to })) {
+					handleMove({ from: slot, to });
+					return true;
+				}
+			}
+
+			// Try to move to the storage
+			for (let index = 0; index < storageSlotCount; index++) {
+				const to: SlotIdentifier = { category: 'storage', index };
+				if (isMoveAllowed(gameState, { from: slot, to })) {
+					handleMove({ from: slot, to });
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	return {

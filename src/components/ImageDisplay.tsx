@@ -56,7 +56,7 @@ function DragDropCardLogic(
 
 	return (
 		<div
-			onDoubleClick={() => handleMoveToDepot(slot)}
+			onDoubleClick={() => handleMoveToDepot(slot, true)}
 			onMouseOver={() => setCurrentSlot(slot)}
 			onDragStart={() =>
 				setSelectors(slot, { category: 'board', index: 0 })}
