@@ -6,15 +6,16 @@ import { GameProvider } from '../context/GameContext';
 import './FreeCellGame.css';
 
 function FreeCellDashboard() {
-	const { cancelMove } = useGameLogic();
+	const { cancelMove, handleAuto } = useGameLogic();
 	return (
-		<div>
+		<div className='frecell_dashboard'>
 			<button onClick={cancelMove}>Cancel</button>
+			<button onClick={handleAuto}>Auto</button>
 		</div>
 	);
 }
 
-export default function FreeCellGame2() {
+export default function FreeCellGame() {
 	return (
 		<div className='freecell_game'>
 			<GameProvider>

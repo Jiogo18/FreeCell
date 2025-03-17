@@ -4,3 +4,9 @@
 	margin: 0 auto;
 	justify-content: space-around;
 }
+
+.frecell_dashboard {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5em;
+}

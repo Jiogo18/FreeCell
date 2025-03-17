@@ -1,6 +1,6 @@
 import {
 	Card,
-	cardColors,
+	cardColorsSelector,
 	GameState,
 	SlotIdentifier,
 } from '../gameLogic/types';
@@ -137,7 +137,7 @@ function drawGameState(context: CasioContext, gameState: GameState) {
 
 	// Draw the depot
 	for (const [color, value] of gameState.depot) {
-		const index = 3 - cardColors.indexOf(color);
+		const index = cardColorsSelector.indexOf(color);
 		drawCardInSlot(gameState, context, { color, value }, {
 			category: 'depot',
 			index,
@@ -181,6 +181,7 @@ function CasioDisplay({ orientation }: CasioDisplayProps) {
 	const {
 		gameState,
 		handleMove,
+		handleAuto,
 		setSelectors,
 		moveSelectorRelative,
 		moveSelectorAbsolute,
@@ -231,6 +232,8 @@ function CasioDisplay({ orientation }: CasioDisplayProps) {
 					}
 					e.preventDefault();
 					break;
+				case 'a':
+					handleAuto();
 			}
 		}
 

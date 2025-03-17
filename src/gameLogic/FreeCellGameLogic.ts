@@ -1,6 +1,6 @@
 import {
 	Card,
-	cardColors,
+	cardColorsSelector,
 	CardValue,
 	GameMove,
 	GameState,
@@ -47,11 +47,11 @@ export function getCardAtSlot(
 		}
 		return gameState.storage[column];
 	} else if (slot.category === 'depot') {
-		const column = 3 - slot.index;
+		const column = slot.index;
 		if (column < 0 || column >= depotSlotCount) {
 			throw new Error('Invalid slot');
 		}
-		const color = cardColors[column];
+		const color = cardColorsSelector[column];
 		const value = gameState.depot.get(color);
 		if (value === undefined) return undefined;
 		return { color, value };
@@ -71,7 +71,7 @@ export function isMoveAllowed(gameState: GameState, move: GameMove): boolean {
 	const cardTo = getCardAtSlot(gameState, move.to);
 
 	if (move.to.category === 'depot') {
-		const color = cardColors[3 - move.to.index];
+		const color = cardColorsSelector[move.to.index];
 		if (color !== cardFrom.color) return false;
 		const value = gameState.depot.get(color) ?? 0;
 		return value + 1 === cardFrom.value;
@@ -95,7 +95,7 @@ export function removeCardFromSlot(
 		gameState.storage[slot.index] = undefined;
 		return card!;
 	} else if (slot.category === 'depot') {
-		const color = cardColors[3 - slot.index];
+		const color = cardColorsSelector[slot.index];
 		const value = gameState.depot.get(color);
 		if (value === undefined) throw new Error('Depot is empty');
 		if (value === 1) {
@@ -123,4 +123,46 @@ export function addCardToSlot(
 	} else if (slot.category === 'board') {
 		gameState.board[slot.index].push(card);
 	}
+}
+
+function canMoveToDepot(gameState: GameState, card: Card): boolean {
+	const color = card.color;
+	const depotValue = gameState.depot.get(color) ?? 0;
+	return depotValue + 1 === card.value;
+}
+
+export function findMovesToDepot(gameState: GameState): GameMove | undefined {
+	// Find in the storage
+	for (const card of gameState.storage.filter((card) => card !== undefined)) {
+		if (canMoveToDepot(gameState, card)) {
+			return {
+				from: {
+					category: 'storage',
+					index: gameState.storage.indexOf(card),
+				},
+				to: {
+					category: 'depot',
+					index: cardColorsSelector.indexOf(card.color),
+				},
+			};
+		}
+	}
+
+	// Find in the board
+	for (let column = 0; column < boardColumnCount; column++) {
+		const card =
+			gameState.board[column][gameState.board[column].length - 1];
+		if (card === undefined) continue;
+		if (canMoveToDepot(gameState, card)) {
+			return {
+				from: { category: 'board', index: column },
+				to: {
+					category: 'depot',
+					index: cardColorsSelector.indexOf(card.color),
+				},
+			};
+		}
+	}
+
+	return undefined;
 }

@@ -3,6 +3,7 @@ import { GameContext } from '../context/GameContext';
 import { GameMove, SlotIdentifier } from './types';
 import {
 	addCardToSlot,
+	findMovesToDepot,
 	isMoveAllowed,
 	removeCardFromSlot,
 } from './FreeCellGameLogic';
@@ -98,10 +99,18 @@ export function useGameLogic() {
 		}
 	}
 
+	function handleAuto() {
+		var move: GameMove | undefined;
+		while (move = findMovesToDepot(gameState)) {
+			handleMove(move);
+		}
+	}
+
 	return {
 		gameState,
 		handleMove,
 		cancelMove,
+		handleAuto,
 		setSelectors,
 		moveSelectorRelative,
 		moveSelectorAbsolute,

@@ -17,6 +17,7 @@ export const cardValues: CardValue[] = [
 	13,
 ];
 export const cardColors: CardColor[] = ['spade', 'heart', 'diamond', 'clover'];
+export const cardColorsSelector: CardColor[] = [...cardColors].reverse();
 
 export interface Card {
 	color: CardColor;
