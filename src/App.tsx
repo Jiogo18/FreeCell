@@ -151,7 +151,7 @@ function App() {
 				<p>
 					Réalisé par Jérôme L. en 2019, porté en JavaScript en 2024.
 				</p>
-				<p>Sources https://github.com/Jiogo18/FreeCell</p>
+				<p>Sources <a href="https://github.com/Jiogo18/FreeCell">https://github.com/Jiogo18/FreeCell</a></p>
 			</div>
 		</>
 	);
