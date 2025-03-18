@@ -10,13 +10,14 @@ import {
 import './ImageDisplay.css';
 import { useGameLogic } from '../gameLogic/useGameLogic.tsx';
 import { boardColumnCount } from '../gameLogic/FreeCellGameLogic.ts';
+import { getBasePath } from '../utils/basePath.ts';
 
 function capitalize(str: string) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function getCardImage(card: Card) {
-	return `/cards/${
+	return `${getBasePath()}/cards/${
 		capitalize(card.color)
 	}/card_${card.value}_${card.color}.png`;
 }
