@@ -7,6 +7,7 @@ import "react-dom";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: Deno.env.get('VITE_BASE_PATH') ?? "/",
   plugins: [
     ...(react() as PluginOption[]),
     ...(deno() as PluginOption[]),

@@ -35,6 +35,8 @@ jobs:
           deno-version: v2.x
 
       - name: Build project
+        env:
+          VITE_BASE_PATH: /FreeCell
         run: deno task build
 
       - name: Setup Pages
