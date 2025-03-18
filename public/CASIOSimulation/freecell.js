@@ -147,11 +147,13 @@ const freecell = {
 		if (configs.couleurs) {
 			display.setColor('red');
 		}
+		// Couleurs: 1=trèfle, 2=carreau, 3=coeur, 4=pique
+		// Affiché de droite à gauche (pique à gauche, trèfle à droite)
 		display.pixelOn(14, 11); // 2
+		display.pixelOn(20, 12); // 3
+		display.setColor('black');
 		display.pixelOn(26, 11); // 4
 		display.pixelOn(26, 12); // 4
-		display.setColor('black');
-		display.pixelOn(20, 12); // 3
 		resetVars();
 
 		console.log('- Affichage init');
@@ -169,7 +171,7 @@ const freecell = {
 		for (let couleur = 1; couleur <= 4; couleur++) {
 			let valeur = this.valeurDepot(couleur);
 			// Rouge ou noir selon la couleur
-			if (configs.couleurs && (couleur === 2 || couleur === 4)) {
+			if (configs.couleurs && (couleur === 2 || couleur === 3)) {
 				display.setColor('red');
 			}
 			this.dessinerValeurCarteXY(couleur * 6, 12, valeur);
@@ -493,7 +495,7 @@ const freecell = {
 		display.pixelOn(x - 1, y - 2);
 
 		// Rouge ou noir selon la couleur
-		if (configs.couleurs && (couleur === 2 || couleur === 4)) {
+		if (configs.couleurs && (couleur === 2 || couleur === 3)) {
 			display.setColor('red');
 		}
 		// Affichage binaire de la couleur
