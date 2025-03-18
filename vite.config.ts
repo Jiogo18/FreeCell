@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, PluginOption } from "vite";
 import react from "@vitejs/plugin-react";
 import deno from "@deno/vite-plugin";
 
@@ -8,8 +8,8 @@ import "react-dom";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
-    deno(),
+    ...(react() as PluginOption[]),
+    ...(deno() as PluginOption[]),
   ],
   optimizeDeps: {
     include: ["react/jsx-runtime"],
