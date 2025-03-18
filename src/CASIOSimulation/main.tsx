@@ -1,5 +1,4 @@
-import React from 'react';
-import useScript from '../hooks/useScript';
+import useScript from '../hooks/useScript.ts';
 
 /**
  * Original code of the CASIO program

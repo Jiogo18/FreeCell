@@ -3,12 +3,12 @@ import {
 	cardColorsSelector,
 	GameState,
 	SlotIdentifier,
-} from '../gameLogic/types';
-import React, { useEffect, useRef, useState } from 'react';
-import { CasioContext, VerticalCasioContext } from './CasioContext';
+} from '../gameLogic/types.ts';
+import { useEffect, useRef, useState } from 'react';
+import { CasioContext, VerticalCasioContext } from './CasioContext.ts';
 import './CasioDisplay.css';
-import { useGameLogic } from '../gameLogic/useGameLogic';
-import { boardColumnCount } from '../gameLogic/FreeCellGameLogic';
+import { useGameLogic } from '../gameLogic/useGameLogic.tsx';
+import { boardColumnCount } from '../gameLogic/FreeCellGameLogic.ts';
 
 type Orientation = 'horizontal' | 'vertical';
 
@@ -240,6 +240,7 @@ function CasioDisplay({ orientation }: CasioDisplayProps) {
 				case 'a':
 				case 'A':
 					handleAuto();
+					break;
 				case 'd':
 				case 'D':
 					handleMoveToDepot(gameState.selection.from);

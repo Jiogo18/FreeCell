@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import {
 	Card,
 	CardColor,
@@ -6,13 +6,10 @@ import {
 	cardColorsSelector,
 	CardValue,
 	SlotIdentifier,
-} from '../gameLogic/types';
+} from '../gameLogic/types.ts';
 import './ImageDisplay.css';
-import { useGameLogic } from '../gameLogic/useGameLogic';
-import { boardColumnCount } from '../gameLogic/FreeCellGameLogic';
-
-interface ImageDisplayProps {
-}
+import { useGameLogic } from '../gameLogic/useGameLogic.tsx';
+import { boardColumnCount } from '../gameLogic/FreeCellGameLogic.ts';
 
 function capitalize(str: string) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
@@ -38,7 +35,7 @@ function CardImage(
 			src={getCardImage(card)}
 			alt={getCardName(card)}
 			title={getCardName(card)}
-			className={'card'}
+			className='card'
 		/>
 	);
 }
@@ -133,7 +130,7 @@ function CardColumn(
 	);
 }
 
-function ImageDisplay({}: ImageDisplayProps) {
+function ImageDisplay() {
 	const { gameState } = useGameLogic();
 
 	return (

@@ -1,5 +1,5 @@
-import createPRNG from './prng';
-import { Card, cardColors, cardValues } from './types';
+import createPRNG from './prng.ts';
+import { Card, cardColors, cardValues } from './types.ts';
 
 export default class Deck {
 	cards: Card[];

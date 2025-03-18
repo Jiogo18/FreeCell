@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { GameContext } from '../context/GameContext';
-import { cardColorsSelector, GameMove, SlotIdentifier } from './types';
+import { GameContext } from '../context/GameContext.tsx';
+import { cardColorsSelector, GameMove, SlotIdentifier } from './types.ts';
 import {
 	addCardToSlot,
 	boardColumnCount,
@@ -10,7 +10,7 @@ import {
 	isMoveAllowed,
 	removeCardFromSlot,
 	storageSlotCount,
-} from './FreeCellGameLogic';
+} from './FreeCellGameLogic.ts';
 
 export function useGameLogic() {
 	const { gameState, setGameState } = useContext(GameContext)!;
@@ -105,8 +105,8 @@ export function useGameLogic() {
 	}
 
 	function handleAuto() {
-		var move: GameMove | undefined;
-		while (move = findMovesToDepot(gameState)) {
+		let move: GameMove | undefined;
+		while ((move = findMovesToDepot(gameState)) !== undefined) {
 			handleMove(move);
 		}
 	}

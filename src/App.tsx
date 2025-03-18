@@ -1,7 +1,6 @@
-import React from 'react';
 import './App.css';
-import FreeCellGame from './components/FreeCellGame';
-import CASIOSimulation from './CASIOSimulation/main';
+import FreeCellGame from './components/FreeCellGame.tsx';
+import CASIOSimulation from './CASIOSimulation/main.tsx';
 
 function App() {
 	return (
@@ -151,7 +150,12 @@ function App() {
 				<p>
 					Réalisé par Jérôme L. en 2019, porté en JavaScript en 2024.
 				</p>
-				<p>Sources <a href="https://github.com/Jiogo18/FreeCell">https://github.com/Jiogo18/FreeCell</a></p>
+				<p>
+					Sources{' '}
+					<a href='https://github.com/Jiogo18/FreeCell'>
+						https://github.com/Jiogo18/FreeCell
+					</a>
+				</p>
 			</div>
 		</>
 	);

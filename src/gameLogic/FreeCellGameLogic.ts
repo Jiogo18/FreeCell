@@ -5,8 +5,8 @@ import {
 	GameMove,
 	GameState,
 	SlotIdentifier,
-} from './types';
-import Deck from './Deck';
+} from './types.ts';
+import Deck from './Deck.ts';
 
 export const boardColumnCount = 8;
 export const storageSlotCount = 4;
@@ -133,7 +133,10 @@ export function canMoveToDepot(gameState: GameState, card: Card): boolean {
 
 export function findMovesToDepot(gameState: GameState): GameMove | undefined {
 	// Find in the storage
-	for (const card of gameState.storage.filter((card) => card !== undefined)) {
+	for (
+		const card of gameState.storage
+			.filter((card: Card | undefined) => card !== undefined)
+	) {
 		if (canMoveToDepot(gameState, card)) {
 			return {
 				from: {

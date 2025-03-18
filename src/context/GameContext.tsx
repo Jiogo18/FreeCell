@@ -1,4 +1,4 @@
-import React, {
+import {
 	createContext,
 	Dispatch,
 	ReactNode,
@@ -6,9 +6,9 @@ import React, {
 	useMemo,
 	useState,
 } from 'react';
-import { GameState } from '../gameLogic/types';
-import { genSeed } from '../gameLogic/prng';
-import { generateBoard } from '../gameLogic/FreeCellGameLogic';
+import { GameState } from '../gameLogic/types.ts';
+import { genSeed } from '../gameLogic/prng.ts';
+import { generateBoard } from '../gameLogic/FreeCellGameLogic.ts';
 
 interface GameContextProps {
 	gameState: GameState;

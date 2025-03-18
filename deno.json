@@ -41,7 +41,13 @@
     "exclude": [
       "README.md",
       "dist/",
-      "script/",
+      "public/CASIOSimulation/",
+      "CASIO/"
+    ]
+  },
+  "lint": {
+    "exclude": [
+      "public/CASIOSimulation/",
       "CASIO/"
     ]
   }

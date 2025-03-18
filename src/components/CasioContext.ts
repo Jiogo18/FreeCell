@@ -40,16 +40,16 @@ export class CasioContext {
 		if (typeof text === 'number') text = '' + text;
 		if (text.length > 1) {
 			const chiffres = text.split('');
-			var width = 0;
+			let textWidth = 0;
 			for (let i = 0; i < chiffres.length; i++) {
 				const taille = this.text(y, x, chiffres[i]);
 				x += taille;
-				width += taille;
+				textWidth += taille;
 			}
-			return width;
+			return textWidth;
 		}
 
-		var width = 0;
+		let width = 0;
 		switch (text) {
 			case ' ':
 			case '0':
@@ -220,11 +220,11 @@ export class VerticalCasioContext extends CasioContext {
 		super(context);
 	}
 
-	fillRect(x: number, y: number, w: number, h: number) {
+	override fillRect(x: number, y: number, w: number, h: number) {
 		super.fillRect(this.width() - y - h, x, h, w);
 	}
 
-	clearRect(x: number, y: number, w: number, h: number) {
+	override clearRect(x: number, y: number, w: number, h: number) {
 		super.clearRect(this.width() - y - h, x, h, w);
 	}
 }

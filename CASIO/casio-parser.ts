@@ -15,7 +15,7 @@ const parsedContent = new Uint8Array(fileContent.length * 4);
 const validASCIIChars = `\r !"%'(),.0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}~`
 	.split('').map(c => c.charCodeAt(0));
 
-const CASIOChars = {
+const CASIOChars: Record<number, Uint8Array<ArrayBufferLike> | undefined> = {
 	14: e('→'), // \u2192
 	16: e('≤'),
 	17: e('≠'),
@@ -40,7 +40,7 @@ const CASIOChars = {
  * Words in 2 bytes
  * Known prefix are 127, 230, 247 or 249 (by category)
  */
-const CASIOWords = {
+const CASIOWords: Record<number, Record<number, Uint8Array<ArrayBufferLike> | undefined> | undefined> = {
 	127: {
 		64: e('Mat '),
 		70: e('Dim '),
