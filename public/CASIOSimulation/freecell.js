@@ -638,7 +638,7 @@ const freecell = {
 			// Annule un déplacement vers le dépôt
 			vars.C = vars.B - 12;
 			vars.H = this.valeurDepot(vars.C);
-			this.setValeurDepot(vars.C, H - 1);
+			this.setValeurDepot(vars.C, vars.H - 1);
 		} else {
 			// Récupère la valeur de la carte B
 			vars.E = this.tailleColonneCarte(vars.B);
@@ -667,15 +667,25 @@ const freecell = {
 		if (vars.S === 1) {
 			vars.S = 0;
 		}
+		const canvasBackup = display.canvas.toDataURL();
+		const displayPixelsBackup = [...display.pixels];
 		display.clear();
-		display.text(55, 115, 'Pause');
-		display.text(55, 123, 'Entrée pour reprendre');
+		display.text(16, 50, 'Pause');
+		display.text(32, 2, 'Entrée pour reprendre');
 		do {
 			await waitForNewKey();
 		} while (getKey !== 'Enter');
 		// Recharger l'affichage
 		console.log('- Pause');
-		this.tas(); // Goto T
+
+		const img = new Image();
+		img.src = canvasBackup;
+		img.onload = () => {
+			display.clear();
+			display.ctx.drawImage(img, 0, 0);
+			display.pixels = displayPixelsBackup;
+			this.tas(); // Goto T
+		};
 	},
 
 	/**

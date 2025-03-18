@@ -1,3 +1,41 @@
+// Font in pixel art of 5x7 pixels (starts NW, goes line by line, bits can be packed by 5 for a line)
+const pixelFont = (function () {
+	// 35 bits => split in 3 and 32 bits
+	const C = [0b011, 0b10100011000010000100001000101110];
+	const F = [0b111, 0b11100001000011110100001000010000];
+	const O = [0b011, 0b10100011000110001100011000101110];
+	const P = [0b111, 0b10100011000111110100001000010000];
+	const U = [0b100, 0b01100011000110001100011000101110];
+	return {
+		A: [0b011, 0b10100011000111111100011000110001],
+		B: [P[0], P[1] | 0b11000111110],
+		C,
+		D: [0b111, 0b00100101000110001100011001011100],
+		E: [F[0], F[1] | 0b11111],
+		F,
+		G: [0b011, 0b10100011000010111100011000101111],
+		H: [0b100, 0b01100011000111111100011000110001],
+		I: [0b011, 0b10001000010000100001000010001110],
+		J: [0b001, 0b11000100001000010000101001001100],
+		K: [0b100, 0b01100101010011000101001001010001],
+		L: [0b100, 0b00100001000010000100001000011111],
+		M: [0b100, 0b01110111010110101100011000110001],
+		N: [0b100, 0b01100011100110101100111000110001],
+		O,
+		P,
+		Q: [O[0], O[1] ^ 0b1000001100011],
+		R: [P[0], P[1] | 0b1001001010001],
+		S: [C[0], C[1] ^ 0b1111010001 << 10],
+		T: [0b111, 0b11001000010000100001000010000100],
+		U,
+		V: [U[0], U[1] ^ 0b1101101010],
+		W: [0b100, 0b01100011010110101101011010101010],
+		X: [0b100, 0b01100010101000100010101000110001],
+		Y: [0b100, 0b01100011000101010001000010000100],
+		Z: [0b111, 0b11000010001000100010001000011111],
+		É: [0b000, 0b10001001111110000111101000011111],
+	};
+})();
 
 /**
  * écran graphique de la calculatrice
@@ -16,8 +54,16 @@ class DisplayGraphCasio {
 		this.clear();
 	}
 
+	width() {
+		return this.canvas.width;
+	}
+
+	height() {
+		return this.canvas.height;
+	}
+
 	clear() {
-		this.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.clearRect(0, 0, this.width(), this.height());
 	}
 
 	fillRect(x, y, w, h) {
@@ -72,7 +118,12 @@ class DisplayGraphCasio {
 				largeur = 5;
 				break;
 			default:
-				console.warn('Taille de texte inconnu :', text);
+				if (pixelFont[text] || pixelFont[text.toUpperCase()]) {
+					largeur = 6;
+				} else {
+					console.warn('Taille de texte inconnu :', text);
+					largeur = 6;
+				}
 				break;
 		}
 
@@ -176,7 +227,26 @@ class DisplayGraphCasio {
 				this.fillRect(x + 1, y + 2, 1, 1);
 				break;
 			default:
-				console.warn('Texte inconnu :', text);
+				const bin = pixelFont[text] ?? pixelFont[text.toUpperCase()];
+				if (bin) {
+					this.clearRect(x, y, 1, 8);
+					for (let j = 0; j < 8; j++) {
+						for (let i = 0; i < 5; i++) {
+							const pos = [y + j, x + i + 1];
+							const index = 39 - (i + j * 5);
+							const on = index < 32
+								? bin[1] & (1 << index)
+								: bin[0] & (1 << (index - 32))
+							if (on) {
+								this.pixelOn(...pos);
+							} else {
+								this.pixelOff(...pos);
+							}
+						}
+					}
+				} else {
+					console.warn('Texte inconnu :', text);
+				}
 		}
 		return largeur;
 	}
@@ -220,6 +290,14 @@ class DisplayGraphCasioVertical extends DisplayGraphCasio {
 		super();
 		this.canvas.width = 64;
 		this.canvas.height = 128;
+	}
+
+	width() {
+		return this.canvas.height;
+	}
+
+	height() {
+		return this.canvas.width;
 	}
 
 	fillRect(x, y, w, h) {
