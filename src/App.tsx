@@ -6,7 +6,7 @@ function App() {
 	return (
 		<>
 			<h1>Freecell</h1>
-			{document.location.pathname.endsWith('CASIOSimulation')
+			{document.location.search.includes('CASIOSimulation')
 				? (
 					<>
 						<p>
@@ -16,13 +16,13 @@ function App() {
 							</a>
 						</p>
 						<CASIOSimulation />
-						<a href='../'>Try the React version</a>
+						<a href='./'>Try the React version</a>
 					</>
 				)
 				: (
 					<>
 						<FreeCellGame />
-						<a href='CASIOSimulation'>Try the CASIO simulation</a>
+						<a href='?CASIOSimulation'>Try the CASIO simulation</a>
 					</>
 				)}
 

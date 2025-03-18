@@ -1,4 +1,5 @@
 import useScript from '../hooks/useScript.ts';
+import { getBasePath } from '../utils/basePath.ts';
 
 /**
  * Original code of the CASIO program
@@ -8,9 +9,9 @@ import useScript from '../hooks/useScript.ts';
  * @returns
  */
 export default function CASIOSimulation() {
-	useScript('CASIOSimulation/displayGraphCasio.js', false);
-	useScript('CASIOSimulation/freecell.js', false);
-	useScript('CASIOSimulation/main.js', false);
+	useScript(`${getBasePath()}/CASIOSimulation/displayGraphCasio.js`, false);
+	useScript(`${getBasePath()}/CASIOSimulation/freecell.js`, false);
+	useScript(`${getBasePath()}/CASIOSimulation/main.js`, false);
 	return (
 		<>
 			<canvas id='display'></canvas>
