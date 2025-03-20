@@ -51,12 +51,17 @@
 	gap: 0.2em;
 	padding-bottom: 60px;
 }
+.card_board > div {
+	flex: 1 1 0px;
+}
 
 .card_column {
 	display: flex;
 	flex-direction: column;
 	gap: 0.2em;
 	min-height: 96px;
+	margin: auto;
+    width: fit-content;
 }
 
 .card_column .card {
@@ -73,4 +78,13 @@
 .selected .card:last-child {
 	border: 2px solid white;
 	margin: -2px;
+}
+
+@media (max-width: 654px) {
+	.freecell_header {
+		flex-direction: column-reverse;
+	}
+	.freecell_header > * {
+		margin: auto;
+	}
 }
