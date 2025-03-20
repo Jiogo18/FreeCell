@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Card,
 	CardColor,
@@ -64,6 +64,8 @@ function DragDropCardLogic(
 		[gameState],
 	);
 
+	const [isMobile, setMobile] = useState(false);
+
 	function onMoveStart() {
 		setSelectors(slot, { category: 'board', index: 0 });
 	}
@@ -108,10 +110,12 @@ function DragDropCardLogic(
 			onDragStart={onMoveStart}
 			onDragOver={onMoveOver}
 			onDragEnd={onMoveEnd}
-			onClick={onCardActivated}
-			onTouchStart={onCardActivated}
+			onClick={isMobile ? undefined : onCardActivated}
+			onTouchStart={() => {
+				onCardActivated();
+				if (!isMobile) setMobile(true);
+			}}
 			className={elementActivated ? 'selected' : undefined}
-			style={{ height: 'fit-content' }}
 		>
 			{children}
 		</div>
