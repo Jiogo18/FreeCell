@@ -3,6 +3,7 @@
 	gap: 1em;
 	margin: 0 auto;
 	justify-content: space-around;
+	flex-wrap: wrap;
 }
 
 .frecell_dashboard {
