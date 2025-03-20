@@ -4,6 +4,7 @@ import {
 	CardValue,
 	GameMove,
 	GameState,
+	SelectionState,
 	SlotIdentifier,
 } from './types.ts';
 import Deck from './Deck.ts';
@@ -64,7 +65,11 @@ export function redOrBlack(card: Card) {
 		: 'black';
 }
 
-export function isMoveAllowed(gameState: GameState, move: GameMove): boolean {
+export function isMoveAllowed(
+	gameState: GameState,
+	move: GameMove | SelectionState,
+): boolean {
+	if (move.to === undefined) return false;
 	const cardFrom = getCardAtSlot(gameState, move.from);
 	if (cardFrom === undefined) return false;
 

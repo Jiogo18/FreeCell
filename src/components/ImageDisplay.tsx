@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import {
 	Card,
 	CardColor,
@@ -42,7 +42,11 @@ function CardImage(
 }
 
 function DragDropCardLogic(
-	{ slot, children }: { slot: SlotIdentifier; children: ReactNode },
+	{ slot, children, hasCard }: {
+		slot: SlotIdentifier;
+		children: ReactNode;
+		hasCard: boolean;
+	},
 ) {
 	const {
 		gameState,
@@ -52,25 +56,62 @@ function DragDropCardLogic(
 		setCurrentSlot,
 	} = useGameLogic();
 
+	const elementActivated = useMemo(
+		() =>
+			gameState.selection.to !== undefined &&
+			gameState.selection.from.category === slot.category &&
+			gameState.selection.from.index === slot.index,
+		[gameState],
+	);
+
+	function onMoveStart() {
+		setSelectors(slot, { category: 'board', index: 0 });
+	}
+	function onMoveOver() {
+		setCurrentSlot(slot);
+	}
+	function onMoveEnd() {
+		if (gameState.selection.to === undefined) return false;
+		handleMove({
+			from: gameState.selection.from,
+			to: gameState.selection.to,
+		});
+	}
+	function onCardActivated() {
+		if (gameState.selection.to === undefined) {
+			onMoveStart();
+		} else {
+			if (
+				!handleMove({
+					from: gameState.selection.from,
+					to: slot,
+				})
+			) {
+				onMoveStart();
+			}
+		}
+	}
+
+	const ref = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		if (!ref.current || !hasCard) return;
+		ref.current.addEventListener('touchmove', (e) => e.preventDefault(), {
+			passive: false,
+		});
+	}, [ref, hasCard]);
+
 	return (
 		<div
+			ref={ref}
 			onDoubleClick={() => handleMoveToDepot(slot, true)}
 			onMouseOver={() => setCurrentSlot(slot)}
-			onDragStart={() =>
-				setSelectors(slot, { category: 'board', index: 0 })}
-			onDragOver={() => {
-				if (gameState.selection.to !== undefined) {
-					setCurrentSlot(slot);
-				}
-			}}
-			onDragEnd={() => {
-				if (gameState.selection.to !== undefined) {
-					handleMove({
-						from: gameState.selection.from,
-						to: gameState.selection.to,
-					});
-				}
-			}}
+			onDragStart={onMoveStart}
+			onDragOver={onMoveOver}
+			onDragEnd={onMoveEnd}
+			onClick={onCardActivated}
+			onTouchStart={onCardActivated}
+			className={elementActivated ? 'selected' : undefined}
+			style={{ height: 'fit-content' }}
 		>
 			{children}
 		</div>
@@ -86,6 +127,7 @@ function CardDepot(
 				category: 'depot',
 				index: cardColorsSelector.indexOf(color),
 			}}
+			hasCard={value !== undefined}
 		>
 			<div className='card_slot'>
 				{value !== undefined
@@ -109,7 +151,10 @@ function CardSlot(
 	{ card, depotIndex }: { card: Card | undefined; depotIndex: number },
 ) {
 	return (
-		<DragDropCardLogic slot={{ category: 'storage', index: depotIndex }}>
+		<DragDropCardLogic
+			slot={{ category: 'storage', index: depotIndex }}
+			hasCard={card !== undefined}
+		>
 			<div className='card_slot'>
 				{card !== undefined && <CardImage card={card} />}
 			</div>
@@ -121,7 +166,10 @@ function CardColumn(
 	{ cards, columnIndex }: { cards: Card[]; columnIndex: number },
 ) {
 	return (
-		<DragDropCardLogic slot={{ category: 'board', index: columnIndex }}>
+		<DragDropCardLogic
+			slot={{ category: 'board', index: columnIndex }}
+			hasCard={cards.length > 0}
+		>
 			<div className='card_column'>
 				{cards.map((card, index) => (
 					<CardImage key={index} card={card} />

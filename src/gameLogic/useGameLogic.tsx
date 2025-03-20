@@ -17,16 +17,18 @@ export function useGameLogic() {
 
 	function handleMove(move: GameMove) {
 		const newGameState = { ...gameState };
-		if (isMoveAllowed(gameState, move)) {
+		const moveAllowed = isMoveAllowed(gameState, move);
+		if (moveAllowed) {
 			const card = removeCardFromSlot(newGameState, move.from);
 			addCardToSlot(newGameState, move.to, card);
 			newGameState.moves.push(move);
 		}
 		newGameState.selection = {
-			from: { category: 'board', index: 0 },
+			from: gameState.selection.from,
 			to: undefined,
 		};
 		setGameState(newGameState);
+		return moveAllowed;
 	}
 
 	function cancelMove() {

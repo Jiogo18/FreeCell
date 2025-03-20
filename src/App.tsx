@@ -16,13 +16,20 @@ function App() {
 							</a>
 						</p>
 						<CASIOSimulation />
-						<a href='./'>Try the React version</a>
+						<a href='./' style={{ width: 'fit-content' }}>
+							Try the React version
+						</a>
 					</>
 				)
 				: (
 					<>
 						<FreeCellGame />
-						<a href='?CASIOSimulation'>Try the CASIO simulation</a>
+						<a
+							href='?CASIOSimulation'
+							style={{ width: 'fit-content' }}
+						>
+							Try the CASIO simulation
+						</a>
 					</>
 				)}
 

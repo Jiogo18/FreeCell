@@ -60,9 +60,17 @@
 }
 
 .card_column .card {
-	margin-bottom: -90%;
 	width: 100%;
 }
+.card_column .card:not(:last-child) {
+	margin-bottom: -90%;
+}
+
 .card_slot > .card {
 	margin: 0;
+}
+
+.selected .card:last-child {
+	border: 2px solid white;
+	margin: -2px;
 }
